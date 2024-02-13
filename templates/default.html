@@ -1,0 +1,30 @@
+
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid">
+    <br>
+    <br>
+    <div class="card">
+        <h1>{{ fields.Summary }}</h1>
+        <p>Description: {{ fields.Description }}</p>
+    </div>
+
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="collapseExample">
+        See More
+    </button>
+    <div class="collapse" id="details">
+        <div class="card">
+        <ul>
+            {% for key, value in fields.items() %}
+            <li>
+                <h6>{{ key }}</h1>
+                <p>{{ value }}</h2>
+            </li>
+            {% endfor %}   
+        </ul>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

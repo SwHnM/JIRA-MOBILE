@@ -1,0 +1,7 @@
+Added:
+
+1.2    More robust search that uses key by default. It currently has two options
+        Search with JQL
+        Hide Closed Tickets
+
+1.1    Improved Styling on Search and Dashboard page
