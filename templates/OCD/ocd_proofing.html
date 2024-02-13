@@ -22,12 +22,16 @@
             <div class="card ">
                 <div class="card-body bg-light">
                     {% for attachment in last_comment.attachments %}
-                    <img src={{ attachment }} width="100%">
+                    <img src="{{ attachment }}" width="100%">
                     {% endfor %}
                     <br>
                     <p class="card-subtitle mb-2 text-muted">{{ last_comment.date }}</p>
                 </div>
             
+        </div>
+        <div class="d-grid gap-2">
+            <button class="btn btn-success" onclick="location.href='/transition/121'">Approve</button></a>
+            <button class="btn btn-danger" onclick="location.href='/transition/301'">Changes</button>
         </div>
 
         <div class="btn-group-vertical" role="group">
@@ -71,7 +75,7 @@
                         {% endfor %}
                     </p>
                     {% for attachment in comment.attachments %}
-                    <img src={{ attachment }} width="120">
+                    <img src="{{ attachment }}" width="120">
                     {% endfor %}
                     <br>
                     <p class="card-subtitle mb-2 text-muted">{{ comment.date }}</p>

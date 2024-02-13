@@ -172,8 +172,15 @@ def save_issue(issue_key):
         if "OCD" in issue_key:
             try:
                 if status == 'w/Publ- Proofing':
+                    # print(str(ticket['transitions']))
+                    comments = ticket["comments"]
+                    last_comment = comments[0]
+                    print(last_comment['attachments'])
 
-                    return render_template('ocd_proofing.html', fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
+                    transitions= ticket["transitions"]
+                    print(transitions)
+
+                    return render_template('OCd/ocd_proofing.html', last_comment=last_comment, fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
                 else:
                     return render_template('OCD/ocd.html', fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
             except:

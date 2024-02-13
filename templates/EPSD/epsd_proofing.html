@@ -22,7 +22,7 @@
             <div class="card ">
                 <div class="card-body bg-light">
                     {% for attachment in last_comment.attachments %}
-                    <img src={{ attachment }} width="100%">
+                    <img src="{{ attachment }}" width="100%">
                     {% endfor %}
                     <br>
                     <p class="card-subtitle mb-2 text-muted">{{ last_comment.date }}</p>
