@@ -3,6 +3,12 @@
 <br>
 <h1>Welcome, {{ username }} </h1>
 <br>
+<div class="card bg-light">
+    <h3 class="card-body">Total Issues: {{tickets | length}} </h3>
+    <h3 class="card-body">In Review:</h3>
+    
+</div>
+
 <div class="container-fluid," style="border-width: 0px;">
     {% if tickets %}
     <ul class="list-group list-group-flush">

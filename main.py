@@ -6,6 +6,8 @@ from dateParser import parse_date
 from commentParser import extract_attachment_references, clean_comment
 from loadTicket import Ticket
 
+import traceback
+
 #####
 #for testing speed of functions
 #####
@@ -35,7 +37,8 @@ def auth():
     try:
         session["username"] = request.form.get("usern")
         session["password"] = request.form.get("passw")
-        
+
+
         session.permanent = True
         app.permanent_session_lifetime = datetime.timedelta(minutes=30)
 
@@ -155,8 +158,10 @@ def save_issue(issue_key):
         last_comment = comments[0]
 
         if "OCD" in issue_key:
-
-            template = 'OCD/ocd_proofing.html' if status == 'w/Publ- Proofing' else 'OCD/ocd.html'
+            if status == 'w/Publ- Proofing':
+                template = 'OCD/ocd_proofing.html'
+            else:
+                template = 'OCD/ocd.html'
         elif "EPSD" in issue_key:
             whitelist_file = open("static/whitelist.txt", "r") 
             data = whitelist_file.read() 
@@ -176,7 +181,10 @@ def save_issue(issue_key):
         return render_template(template, last_comment=last_comment, fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
     
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        error_message = str(e)
+        traceback_details = traceback.format_exc()
+        print(f"An error occurred: {error_message}")
+        print(f"Traceback: {traceback_details}")
         return redirect('/dashboard')
 
     

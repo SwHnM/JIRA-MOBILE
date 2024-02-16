@@ -44,16 +44,27 @@ class Ticket:
 
 #####
         raw_comments_api_call = full_comment(issue_key, self.username, self.password)
+       
 
 #####
         
         # Comments
         comment_list = []
         comments = raw_comments_api_call['comments']
-        for comment in comments:
+        for comment in comments:   
+            
             author = comment['author']['displayName']
             date = comment['created']
             body = comment['body']
+            comment_props= comment['properties']
+            
+            if comment_props:
+                try:
+                    internal = not comment_props[0]['value']['allow']
+                except:
+                    internal = comment_props[0]['value']['internal']
+                    
+            
             
 
             # Search for referenced attachments and download them
@@ -65,7 +76,8 @@ class Ticket:
                 'author': author,
                 'date': parse_date(date),
                 'body': clean_comment(body),
-                'attachments': filepaths
+                'attachments': filepaths,
+                'internal' : internal,
             }
             comment_list.append(comment_info)
 

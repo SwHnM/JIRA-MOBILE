@@ -3,10 +3,10 @@
 <br>
 <div>
     <form method="POST" action="/comment">
-        <div class="mb-3">
-            <textarea class="form-control" rows="3" name="comment" placeholder="Type your comment here..."></textarea>
+        <div class="mb-3 position-relative">
+            <textarea class="form-control shadow" rows="3" name="comment" placeholder="Type your comment here..."></textarea>
+            <button class="shadow-sm btn btn-primary btn-sm position-absolute bottom-0 end-0 m-1" type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>    
         </div>
-        <button class="btn btn-primary float-end" type="submit">Comment</button>    
     </form>
 
     <br>
@@ -16,9 +16,12 @@
         <ul class="list-group list-group-flush" style="border:0;">
             {% for comment in comments %}
             <li class="list-group-item" style="border:0;">
-                <div class="card shadow" style="border:0">
+                <div class="card shadow-sm" style="border:0">
                     <div class="card-body bg-light">
                         <h5 class="card-title">{{ comment.author }}</h5>
+                        {% if comment.internal %}
+                            <span class="shadow-sm position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"><i class="fa fa-eye-slash"></i></span>
+                        {% endif %}
                         <p class="text">
                             {% for line in comment.body.splitlines() %}
                                 {{line | safe }}<br>
@@ -31,7 +34,7 @@
                                 <img class="img-fluid"src="{{ attachment }}">
                                 {% endfor %}
                             </div>
-                            <small class="text-muted">{{ comment.date }}</small>
+                            <small class="text-muted position-absolute end-0 bottom-0 m-3">{{ comment.date }}</small>
                         </div>
                     </div>
                 </div>
