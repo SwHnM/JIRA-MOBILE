@@ -1,0 +1,111 @@
+{% macro comment_component(comments) %}
+<h2>Comments</h2>
+<br>
+<div>
+    <form method="POST" action="/comment">
+        <div class="mb-3">
+            <textarea class="form-control" rows="3" name="comment" placeholder="Type your comment here..."></textarea>
+        </div>
+        <button class="btn btn-primary float-end" type="submit">Comment</button>    
+    </form>
+
+    <br>
+    <br>
+
+    <div>
+        <ul class="list-group list-group-flush" style="border:0;">
+            {% for comment in comments %}
+            <li class="list-group-item" style="border:0;">
+                <div class="card shadow" style="border:0">
+                    <div class="card-body bg-light">
+                        <h5 class="card-title">{{ comment.author }}</h5>
+                        <p class="text">
+                            {% for line in comment.body.splitlines() %}
+                                {{line | safe }}<br>
+                            {% endfor %}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                {% for attachment in comment.attachments %}
+
+                                <img class="img-fluid"src="{{ attachment }}">
+                                {% endfor %}
+                            </div>
+                            <small class="text-muted">{{ comment.date }}</small>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <br>
+            {% endfor %}   
+        </ul>
+        <br>
+        <br>
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro summary(fields) %}
+<div class="position-relative">
+    <h2 class="mb-0">{{ fields.Summary }}</h2>
+    <button class="btn btn-light rounded-circle" id="copyButton" onclick="copyText()">
+        <i class="fas fa-copy" style="color: grey;"></i>
+    </button>
+</div>
+<script>
+
+    // This is for the copy button at the top of the page
+        
+        document.getElementById('copyButton').addEventListener('click', function() {
+            // Static text to copy
+            const key = document.getElementById('key').innerHTML;
+    
+            // Create a temporary textarea element to hold the text
+            var textarea = document.createElement('textarea');
+            textarea.value = key;
+            document.body.appendChild(textarea);
+    
+            // Select the text in the textarea
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+    
+            // Copy the selected text to the clipboard
+            document.execCommand('copy');
+    
+            // Remove the temporary textarea
+            document.body.removeChild(textarea);
+    
+             // Change the button icon to a checkmark
+             var buttonIcon = document.getElementById('copyButton').querySelector('i');
+            buttonIcon.classList.remove('fa-copy');
+            buttonIcon.classList.add('fa-check');
+    
+            // Disable the button to prevent multiple clicks
+            document.getElementById('copyButton').disabled = true;
+        });
+    </script>
+{% endmacro %}
+
+
+{% macro participant_list(participants) %}
+<p>Participant Macro, Under dev</p>
+<br>
+    {% for participant in participants %}
+    
+    <div class="card w-50" style="margin-right: 20px;">
+    <div class="d-flex align-items-center" style="padding:10px">
+        <img class="rounded-circle"  src='{{ participant.avatarUrls['24x24'] }}'>
+        <h6 style="margin-left:10px;">{{ participant.displayName }} </h6>
+    </div>
+    </div>
+    {% endfor %}
+
+<br>
+<br>
+<br>
+<p>END Participant Macro</p>
+{% endmacro %}
+
+
+

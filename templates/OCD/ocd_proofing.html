@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container-fluid">
     <br>
-        <span class="badge bg-primary">{{issue_key}}</span>
+        <span id="key" class="badge bg-primary">{{issue_key}}</span>
         <span class="badge bg-primary">{{fields['Issue Type'].name}}</span>
 
         <!-- Page won't display if value doesn't exist -->
@@ -12,9 +12,11 @@
         {% endif %}
         <span class="badge bg-primary">{{fields.Status.name}}</span>
 
-    
+    <br>
+    <br>
     <div class="card" style="border-width:0;">
-        <h2>{{ fields.Summary }}</h2>
+        {% from "/Components/macros.html" import summary %}
+        {{ summary(fields) }}
         <br>
 
     <!-- SPECIAL FOR PROOFING PAGE -->
@@ -23,8 +25,8 @@
                 <div class="card-body bg-light">
                     {% for attachment in last_comment.attachments %}
                     <img src="{{ attachment }}" width="100%">
-                    {% endfor %}
                     <br>
+                    {% endfor %}
                     <p class="card-subtitle mb-2 text-muted">{{ last_comment.date }}</p>
                 </div>
             
@@ -35,52 +37,45 @@
         </div>
         <!-- END SPECIAL FOR PROOFING PAGE -->
 
-
-        
-
-     
-
      <!-- Comments -->
-
-     <br>
-        <form method="POST" action="/comment">
-            <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label">Add Comment</label>
-                <textarea class="form-control" rows="3" name="comment"></textarea>
-            </div>
-            <button class="btn btn-primary float-end" type="submit">Post</button>    
-        </form>
-    </div>
 <br>
 <br>
-     <div>
+     {% from "/Components/macros.html" import comment_component %}
+    {{ comment_component(comments) }}
 
-        <ul class="list-group list-group-flush">
-            
-            {% for comment in comments %}
-            <li class="list-group-item">
-            <div class="card ">
-                <div class="card-body bg-light">
-                    <h5 class="card-title">{{ comment.author }}</h6>
-                    <p class="text">
-                        {% for line in comment.body.splitlines() %}
-                            {{line}}<br>
-                        {% endfor %}
-                    </p>
-                    {% for attachment in comment.attachments %}
-                    <img src="{{ attachment }}" width="120">
-                    {% endfor %}
-                    <br>
-                    <p class="card-subtitle mb-2 text-muted">{{ comment.date }}</p>
-                </div>
-            </li>
-            <br>
-            {% endfor %}   
-        </ul>
-        <br>
-        <br>
-    </div>
 
-</div>
+
+<script>
+
+    // This is for the copy button at the top of the page
+        
+        document.getElementById('copyButton').addEventListener('click', function() {
+            // Static text to copy
+            const key = document.getElementById('key').innerHTML;
+    
+            // Create a temporary textarea element to hold the text
+            var textarea = document.createElement('textarea');
+            textarea.value = key;
+            document.body.appendChild(textarea);
+    
+            // Select the text in the textarea
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+    
+            // Copy the selected text to the clipboard
+            document.execCommand('copy');
+    
+            // Remove the temporary textarea
+            document.body.removeChild(textarea);
+    
+             // Change the button icon to a checkmark
+            var buttonIcon = document.getElementById('copyButton').querySelector('i');
+            buttonIcon.classList.remove('fa-copy');
+            buttonIcon.classList.add('fa-check');
+    
+            // Disable the button to prevent multiple clicks
+            document.getElementById('copyButton').disabled = true;
+        });
+    </script>
 
 {% endblock %}

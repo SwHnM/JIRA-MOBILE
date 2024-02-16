@@ -14,7 +14,8 @@
 
     
     <div class="card" style="border-width:0;">
-        <h2>{{ fields.Summary }}</h2>
+        {% from "/Components/macros.html" import summary %}
+        {{ summary(fields) }}
         <br>
 
     <!-- SPECIAL FOR PROOFING PAGE -->
@@ -45,45 +46,7 @@
 
      <!-- Comments -->
 
-     <br>
-        <form method="POST" action="/comment">
-            <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label">Add Comment</label>
-                <textarea class="form-control" rows="3" name="comment"></textarea>
-            </div>
-            <button class="btn btn-primary float-end" type="submit">Post</button>    
-        </form>
-    </div>
-<br>
-<br>
-     <div>
-
-        <ul class="list-group list-group-flush">
-            
-            {% for comment in comments %}
-            <li class="list-group-item">
-            <div class="card ">
-                <div class="card-body bg-light">
-                    <h5 class="card-title">{{ comment.author }}</h6>
-                    <p class="text">
-                        {% for line in comment.body.splitlines() %}
-                            {{line}}<br>
-                        {% endfor %}
-                    </p>
-                    {% for attachment in comment.attachments %}
-                    <img src={{ attachment }} width="120">
-                    {% endfor %}
-                    <br>
-                    <p class="card-subtitle mb-2 text-muted">{{ comment.date }}</p>
-                </div>
-            </li>
-            <br>
-            {% endfor %}   
-        </ul>
-        <br>
-        <br>
-    </div>
-
-</div>
+     {% from "/Components/macros.html" import comment_component %}
+    {{ comment_component(comments) }}
 
 {% endblock %}

@@ -123,22 +123,6 @@ def search():
                 #for a succesful api request
                 tickets = jira.get_issues_from_jql(jql)
 
-#### This section is under construction
-                
-                # for ticket in tickets:
-                #     sm_page = jira.get_sm_page(ticket['issue_key'])
-                #     platform = jira.get_platform(ticket['issue_key'])
-
-                #     if sm_page == 'Adiyogi':
-                #         ticket['sm_icon'] = '/static/assets/icons/adiyogi.webp' # insert filepath here
-
-                #     # ticket['platform_icon'] = 'filepath' # insert filepath here
-
-
-                #     # print(sm_page)
-                #     # print(platform)
-                #     print(tickets)
-
             except:
                 try:
                     #if api request fails, checks if user is logged in. If they are, it assumes the jql had incorrect formatting. 
@@ -158,65 +142,58 @@ def search():
 # This gets the issue key and saves it in state.
 @app.route("/search/<issue_key>")
 def save_issue(issue_key):
-    session["issue_key"] = issue_key
-    username = session.get("username")
-    password = session.get("password")
-
     try:
+        session["issue_key"] = issue_key
+        username = session.get("username")
+        password = session.get("password")
+        
         issue_key = session.get("issue_key")
         ticket = Ticket(username, password, issue_key).load()
-
         status = str(ticket["status"])
 
+        comments = ticket["comments"]
+        last_comment = comments[0]
 
         if "OCD" in issue_key:
-            try:
-                if status == 'w/Publ- Proofing':
-                    # print(str(ticket['transitions']))
-                    comments = ticket["comments"]
-                    last_comment = comments[0]
-                    print(last_comment['attachments'])
 
-                    transitions= ticket["transitions"]
-                    print(transitions)
-
-                    return render_template('OCD/ocd_proofing.html', last_comment=last_comment, fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
-                else:
-                    return render_template('OCD/ocd.html', fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
-            except:
-                return render_template('basic.html', fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
+            template = 'OCD/ocd_proofing.html' if status == 'w/Publ- Proofing' else 'OCD/ocd.html'
         elif "EPSD" in issue_key:
-            try:
-                if status == 'Pending Requester Clarification':
+            whitelist_file = open("static/whitelist.txt", "r") 
+            data = whitelist_file.read() 
+            whitelist = data.split("\n") 
+            whitelist_file.close()
 
-                    # 'Creative under Proofing'
+            raw_fields = ticket["fields"]
+            fields = {key: raw_fields[key] for key in whitelist if key in raw_fields}
 
-                    comments = ticket["comments"]
-                    last_comment = comments[0]
-                    print(last_comment)
-
-                    return render_template('EPSD/epsd_proofing.html', last_comment=last_comment, fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
-            
-                else:
-                    return render_template('EPSD/epsd.html', username=username, fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
-            except:
-                return render_template('basic.html')
+            if status == 'Pending Requester Clarification':
+                template = 'EPSD/epsd_proofing.html'
+            else:
+                template = 'EPSD/epsd.html'
         else:
+            template = 'basic.html'
 
-            return render_template('OCD/epsd.html', username=username, fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
-    except:
-        return redirect('/login')
+        return render_template(template, last_comment=last_comment, fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return redirect('/dashboard')
+
     
 # This route only exists for the navbar- it routes to the ticket saved in state
 @app.route("/ticket")
 def ticket():
-    issue_key = session.get("issue_key")
-    path = "/search/" + issue_key
+    
     try:
+        issue_key = session.get("issue_key")
+        path = "/search/" + issue_key
     
         return redirect(path)
     except:
-        return redirect('/search')
+        try:
+            return redirect('/search')
+        except:
+            return redirect('/login')
     
    
 

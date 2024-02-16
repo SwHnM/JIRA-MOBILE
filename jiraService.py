@@ -92,7 +92,9 @@ class JIRAService:
             download = attached_file.get()
             with open(file_path, 'wb') as f:
                 f.write(download)
-                return "wow"
+                file_path_for_html = '/'+file_path
+                return file_path_for_html
+                
         
 
         

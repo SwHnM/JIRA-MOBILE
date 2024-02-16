@@ -1,6 +1,7 @@
 from jiraService import JIRAService
 from dateParser import parse_date
 from commentParser import extract_attachment_references, clean_comment
+from directApiRequests import full_comment
 
 class Ticket:
     def __init__(self, username, password, issue_key):
@@ -25,7 +26,7 @@ class Ticket:
         for field_id in issue.raw['fields']:
             field_name = field_map.get(field_id, field_id)
             field_val = issue.raw['fields'][field_id]
-            if field_val is not None and field_val != "Unresolved" and field_val != 0.0:
+            if field_val is not None and field_val != "Unresolved" and field_val != 0.0 and field_val != []:
                 fields[field_name] = field_val
 
         # Transitions and workflow
@@ -34,13 +35,26 @@ class Ticket:
         # Gets list of attachments
         attachments = jira.attachments(issue_key)
 
+        # Gets participants, reporter, assignee
+        try:
+            participants = fields['Request participants']
+        except:
+            participants = {}
+            print('ticket has no participants')
+
+#####
+        raw_comments_api_call = full_comment(issue_key, self.username, self.password)
+
+#####
+        
         # Comments
         comment_list = []
-        comments = jira.get_comments(issue_key)
+        comments = raw_comments_api_call['comments']
         for comment in comments:
-            author = comment.author
-            date = comment.created
-            body = comment.body
+            author = comment['author']['displayName']
+            date = comment['created']
+            body = comment['body']
+            
 
             # Search for referenced attachments and download them
             referenced_attachments = extract_attachment_references(body)
@@ -63,6 +77,7 @@ class Ticket:
             'transitions': transitions,
             'issue_key': issue_key,
             'status' : status,
+            'participants' :participants,
         }
 
         return ticket
