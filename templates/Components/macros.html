@@ -4,14 +4,11 @@
 <div>
     <form method="POST" action="/comment">
         <div class="mb-3 position-relative">
-            <textarea class="form-control shadow" rows="3" name="comment" placeholder="Type your comment here..."></textarea>
+            <textarea class="form-control shadow" rows="3" name="comment" placeholder="Type your comment..."></textarea>
             <button class="shadow-sm btn btn-primary btn-sm position-absolute bottom-0 end-0 m-1" type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>    
         </div>
     </form>
-
     <br>
-    <br>
-
     <div>
         <ul class="list-group list-group-flush" style="border:0;">
             {% for comment in comments %}
@@ -108,6 +105,101 @@
 <br>
 <br>
 <p>END Participant Macro</p>
+{% endmacro %}
+
+{% macro sidescroller(tickets) %}
+
+<h2>Horizontal Scrolling Section test</h2>
+<section class="ticket-section">
+    {% if tickets %}
+      <div class="ticket-container">
+        {% for ticket in tickets %}
+          <div class="ticket-card shadow" onclick="location.href='/search/{{ ticket.key }}';">
+            {% if ticket.fields.customfield_108529.value == 'Adiyogi' %}
+                <img src="/static/assets/icons/Adiyogi.svg" height="30" class="bottom-right-badge">
+            {% elif ticket.fields.customfield_108529.value == 'Linga Bhairavi' %}
+                <img src="/static/assets/icons/Devi.svg" height="30" class="bottom-right-badge">
+            {% else %}
+                <span class="badge bottom-right-badge  bg-success">{{ ticket.fields.customfield_108529.value }}</span>
+            {% endif %}
+            <span class="badge bottom-badge bg-light text-dark ">{{ ticket.key }}</span>
+            <div class="ticket-summary">
+                <h6>
+                    {{ ticket.fields.summary }}
+                </h6>
+            </div>
+            
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+  
+
+<style>
+.ticket-section {
+  width: 100%;
+  height: 270px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+}
+
+.ticket-section::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers (e.g. Chrome, Safari) */
+}
+
+.ticket-container {
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 10px;
+}
+
+.ticket-card {
+  flex: 0 0 auto;
+  width: 200px;
+  height: 220px;
+  margin-right: 10px;
+  background-color: #ffffff;
+  border: 0 solid #cccccc;
+  border-radius: 5px;
+  position: relative; /* Ensure badge is positioned relative to the card */
+  cursor: pointer;
+  transition: 0.5s;
+  
+}
+
+.ticket-card:hover {
+  background-color:rgb(245, 245, 245);
+  margin: 5px;
+  transition: 0.5s;
+  
+}
+
+.ticket-card:last-child {
+  margin-right: 0;
+}
+
+.bottom-right-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.bottom-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+.ticket-summary {
+  padding: 10px;
+  white-space: normal;
+}
+
+
+</style>
+
 {% endmacro %}
 
 

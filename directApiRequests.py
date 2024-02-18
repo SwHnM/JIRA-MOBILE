@@ -23,3 +23,28 @@ def full_comment(issue_key, username, password):
 
 
     return output
+
+def raw_search(jql, fields, username, password):
+
+   
+    auth_raw = f'{username}:{password}'
+    auth_encode = auth_raw.encode("ascii") 
+    auth_b64 = base64.b64encode(auth_encode)
+    
+    auth = auth_b64.decode("ascii")
+
+    url = "https://servicedesk.isha.in/rest/api/2/search"
+    headers = {
+        "Authorization": f"Basic {auth}",
+        "Content-Type": "application/json",  
+    }
+    payload = {
+        "jql": jql,
+        "fields": fields
+    }
+
+    response = requests.post(url, headers=headers, json=payload)
+    output = response.json()
+    tickets = output['issues']
+
+    return tickets

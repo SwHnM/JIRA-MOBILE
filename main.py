@@ -5,6 +5,7 @@ import datetime
 from dateParser import parse_date
 from commentParser import extract_attachment_references, clean_comment
 from loadTicket import Ticket
+from directApiRequests import raw_search
 
 import traceback
 
@@ -155,7 +156,10 @@ def save_issue(issue_key):
         status = str(ticket["status"])
 
         comments = ticket["comments"]
-        last_comment = comments[0]
+        if comments:
+            last_comment = comments[0]
+        else:
+            last_comment = {}
 
         if "OCD" in issue_key:
             if status == 'w/Publ- Proofing':
@@ -245,7 +249,14 @@ def dashboard():
         
         jql= 'assignee =' + username + ' AND type != "Imp New Content" AND type != "Imp Proofing" AND status not in ("text delivered", "EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")'
         
-        tickets = jira.get_issues_from_jql(jql)
+        social_media_account = "customfield_108529"
+        
+        fields = ["summary", "description", "assignee", "status", social_media_account]
+        
+        tickets = raw_search(jql, fields, username, password)
+
+        print(tickets)
+
 
     except:
         return redirect("/login")

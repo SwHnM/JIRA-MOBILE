@@ -1,39 +1,40 @@
 {% extends 'layout.html' %}
 {% block content %}
 <br>
-<h1>Welcome, {{ username }} </h1>
+<h6>{{ username }} </h6>
 <br>
-<div class="card bg-light">
-    <h3 class="card-body">Total Issues: {{tickets | length}} </h3>
-    <h3 class="card-body">In Review:</h3>
-    
-</div>
 
+<div>
+    {% from "/Components/macros.html" import sidescroller %}
+    {{ sidescroller(tickets) }}
+
+</div>
+<br>
 <div class="container-fluid," style="border-width: 0px;">
     {% if tickets %}
     <ul class="list-group list-group-flush">
         {% for ticket in tickets %}
-        <li class="list-group-item" style="padding-left: 0; padding-right: 0;">
-            <form id="form_{{ ticket.issue_key }}" method="POST" action="/ticket">
-                <input type="hidden" name="issue_key" value="{{ ticket.issue_key }}" />
+        <li class="list-group-item" style="padding-left: 0; padding-right: 0; border:0;">
+            <form id="form_{{ ticket.key }}" method="POST" action="/ticket">
+                <input type="hidden" name="issue_key" value="{{ ticket.key }}" />
             </form>
-            <div class="card m-0" onclick="location.href='/search/{{ ticket.issue_key }}';" style="cursor: pointer; position: relative; margin-bottom: 0; border: 0;">
+            <div class="card m-0 shadow" onclick="location.href='/search/{{ ticket.key }}';" style="cursor: pointer; position: relative; margin-bottom: 0; border: 0;">
                 <!-- These if statements change the colors depending on the ticket status  -->
-                    {% if ticket.status.name == 'Closed' %}
-                        <span class="badge bg-danger position-absolute bottom-0 end-0">{{ ticket.status }}</span>
-                    {% elif ticket.status.name == 'Text Delivered' %}
-                        <span class="badge bg-success position-absolute bottom-0 end-0">{{ ticket.status }}</span>
-                    {% elif ticket.status.name == 'Cancelled' %}
-                        <span class="badge bg-danger position-absolute bottom-0 end-0">{{ ticket.status }}</span>
+                    {% if ticket.fields.status.name == 'Closed' %}
+                        <span class="badge bg-danger position-absolute bottom-0 end-0">{{ ticket.fields.status.name }}</span>
+                    {% elif ticket.fields.status.name == 'Text Delivered' %}
+                        <span class="badge bg-success position-absolute bottom-0 end-0">{{ ticket.fields.status.name }}</span>
+                    {% elif ticket.fields.status.name == 'Cancelled' %}
+                        <span class="badge bg-danger position-absolute bottom-0 end-0">{{ ticket.fields.status.name }}</span>
 
                     {% else %}
-                        <span class="badge bg-primary position-absolute bottom-0 end-0">{{ ticket.status }}</span>
+                        <span class="badge bg-primary position-absolute bottom-0 end-0">{{ ticket.fields.status.name }}</span>
                     {% endif %}
                 <!-- End of if -->
 
                 <div class="card-body p-2">
-                    <h5 class="card-title">{{ ticket.summary }}</h5>
-                    <span class="badge bg-light text-dark">{{ ticket.issue_key }}</span>
+                    <h5 class="card-title">{{ ticket.fields.summary }}</h5>
+                    <span class="badge bg-light text-dark">{{ ticket.key }}</span>
                 </div>
             </div>
             
