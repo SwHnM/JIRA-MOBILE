@@ -1,57 +1,20 @@
 {% extends 'layout.html' %}
 {% block content %}
 <br>
-<h6>{{ username }} </h6>
-<br>
-
-<div>
-    {% from "/Components/macros.html" import sidescroller %}
-    {{ sidescroller(tickets) }}
-
-</div>
-<br>
-<div class="container-fluid," style="border-width: 0px;">
-    {% if tickets %}
-    <ul class="list-group list-group-flush">
-        {% for ticket in tickets %}
-        <li class="list-group-item" style="padding-left: 0; padding-right: 0; border:0;">
-            <form id="form_{{ ticket.key }}" method="POST" action="/ticket">
-                <input type="hidden" name="issue_key" value="{{ ticket.key }}" />
-            </form>
-            <div class="card m-0 shadow" onclick="location.href='/search/{{ ticket.key }}';" style="cursor: pointer; position: relative; margin-bottom: 0; border: 0;">
-                <!-- These if statements change the colors depending on the ticket status  -->
-                    {% if ticket.fields.status.name == 'Closed' %}
-                        <span class="badge bg-danger position-absolute bottom-0 end-0">{{ ticket.fields.status.name }}</span>
-                    {% elif ticket.fields.status.name == 'Text Delivered' %}
-                        <span class="badge bg-success position-absolute bottom-0 end-0">{{ ticket.fields.status.name }}</span>
-                    {% elif ticket.fields.status.name == 'Cancelled' %}
-                        <span class="badge bg-danger position-absolute bottom-0 end-0">{{ ticket.fields.status.name }}</span>
-
-                    {% else %}
-                        <span class="badge bg-primary position-absolute bottom-0 end-0">{{ ticket.fields.status.name }}</span>
-                    {% endif %}
-                <!-- End of if -->
-
-                <div class="card-body p-2">
-                    <h5 class="card-title">{{ ticket.fields.summary }}</h5>
-                    <span class="badge bg-light text-dark">{{ ticket.key }}</span>
-                </div>
-            </div>
-            
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <br>
-    <br>
-    <br>
-    <br>
-    <div style="text-align: center; opacity: 0.5;">
-        <h2>No tickets!</h2><i class="fa fa-face-surprise" style="font-size: 30px; "></i>
+    <div class="container-fluid d-inline-block">
+        <h5 class="d-inline-block mb-0">Dashboard</h5>
+        <h6 class="d-inline-block mb-0 float-end">{{ username }}</h6>
     </div>
-    {% endif %}
-</div>
+<br>
+<br>
+<div>
+    {% for deck in decks %}
+            {% from "/Components/macros.html" import sidescroller %}
+            {{ sidescroller(deck['name'], deck['jql'], deck['tickets'], deck['color'], deck['icon']) }}
+    {% endfor %}
 
+</div>
+<br>
 <script>
     function submitForm(issueKey) {
         document.getElementById("form_" + issueKey).submit();

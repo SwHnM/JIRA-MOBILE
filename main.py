@@ -245,20 +245,38 @@ def dashboard():
         username = session.get("username")
         password = session.get("password")
 
-        jira= JIRAService(username, password, "https://servicedesk.isha.in")
-        
-        jql= 'assignee =' + username + ' AND type != "Imp New Content" AND type != "Imp Proofing" AND status not in ("text delivered", "EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")'
+### decks is refering to the horizontal display of cards.
         
         social_media_account = "customfield_108529"
         
         fields = ["summary", "description", "assignee", "status", social_media_account]
         
-        tickets = raw_search(jql, fields, username, password)
+        deck_db = [
+            {'name':"My Tickets",
+             'jql': f'assignee = currentUser() AND status not in ("text delivered","EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")',
+             'color': 'red',
+             'icon': 'fa-ghost'},
+            
+            {'name':"Klemen's Tickets",
+             'jql': 'assignee = klemen.b AND status not in ("text delivered", "EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")',
+             'color': 'green',
+             'icon': 'fa-dragon'},
 
-        print(tickets)
+            {'name':"Recent Tickets",
+             'jql': 'issueKey in issueHistory() order by lastViewed DESC',
+             'color': 'green',
+             'icon': 'fa-chess-pawn'},
+        ]
 
+        for deck in deck_db:
+            jql = deck['jql']
+            tickets = raw_search(jql, fields, username, password)
+            deck['tickets'] = tickets
+
+    
+        # jql= 'assignee =' + username + ' AND type != "Imp New Content" AND type != "Imp Proofing" AND status not in ("text delivered", "EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")'
 
     except:
         return redirect("/login")
         
-    return render_template('dashboard.html', tickets=tickets, last_jql=jql, username=username)
+    return render_template('dashboard.html', decks = deck_db, last_jql=jql, username=username)

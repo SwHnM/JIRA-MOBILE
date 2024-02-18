@@ -1,10 +1,11 @@
 {% macro comment_component(comments) %}
+
 <h2>Comments</h2>
 <br>
 <div>
     <form method="POST" action="/comment">
         <div class="mb-3 position-relative">
-            <textarea class="form-control shadow" rows="3" name="comment" placeholder="Type your comment..."></textarea>
+            <textarea  id="add-comment" class="form-control shadow" rows="3" name="comment" placeholder="Type your comment..."></textarea>
             <button class="shadow-sm btn btn-primary btn-sm position-absolute bottom-0 end-0 m-1" type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>    
         </div>
     </form>
@@ -107,20 +108,25 @@
 <p>END Participant Macro</p>
 {% endmacro %}
 
-{% macro sidescroller(tickets) %}
+{% macro sidescroller(name, jql, tickets, color, icon) %}
+<span style="display: inline-block; margin-left: 10px;">
+    <i class="fa-solid {{icon}} icon-bg {{ color }}"></i>
+    <h2 class="deck-title" style="display: inline-block; vertical-align: middle; margin-left: 10px;">{{ name }}</h2>
+</span>
 
-<h2>Horizontal Scrolling Section test</h2>
 <section class="ticket-section">
     {% if tickets %}
       <div class="ticket-container">
         {% for ticket in tickets %}
-          <div class="ticket-card shadow" onclick="location.href='/search/{{ ticket.key }}';">
+          <div class="ticket-card {{ color }} shadow" onclick="location.href='/search/{{ ticket.key }}';">
             {% if ticket.fields.customfield_108529.value == 'Adiyogi' %}
-                <img src="/static/assets/icons/Adiyogi.svg" height="30" class="bottom-right-badge">
+                <i class="adiyogi bottom-right-badge"></i>
             {% elif ticket.fields.customfield_108529.value == 'Linga Bhairavi' %}
-                <img src="/static/assets/icons/Devi.svg" height="30" class="bottom-right-badge">
+                <i class="devi bottom-right-badge"></i>
+            {% elif ticket.fields.customfield_108529.value == 'Conscious Planet' %}
+                <i class="fa-solid fa-earth-africa bottom-right-badge" style="font-size: 25px;"></i>
             {% else %}
-                <span class="badge bottom-right-badge  bg-success">{{ ticket.fields.customfield_108529.value }}</span>
+                <span class="badge bottom-right-badge bg-success">{{ ticket.fields.customfield_108529.value }}</span>
             {% endif %}
             <span class="badge bottom-badge bg-light text-dark ">{{ ticket.key }}</span>
             <div class="ticket-summary">
@@ -137,6 +143,50 @@
   
 
 <style>
+/* colors are taken from bootstrap v 5.3 */
+.icon-bg {
+    color: white;
+    height: 30px;
+    width: 30px;
+    padding: 20px;
+    border-radius: 50%;
+    background-color: black;
+    font-size: 20px;
+    vertical-align: middle;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.icon-bg.green {
+    background-color: #0a3622;
+}
+
+.icon-bg.red {
+    background-color: #58151c;
+}
+
+/* for social media page icons */
+.devi {
+    background: url('/static/assets/icons/Devi.svg');
+    height: 25px;
+    width: 25px;
+    display: block;
+    /* Other styles here */
+}
+.adiyogi {
+    background: url('/static/assets/icons/Adiyogi.svg');
+    height: 25px;
+    width: 25px;
+    display: block;
+    /* Other styles here */
+}
+
+
+
+
+
 .ticket-section {
   width: 100%;
   height: 270px;
@@ -169,8 +219,43 @@
   
 }
 
-.ticket-card:hover {
-  background-color:rgb(245, 245, 245);
+.ticket-card.green {
+  flex: 0 0 auto;
+  width: 200px;
+  height: 220px;
+  margin-right: 10px;
+  background-color: white;
+  border-radius: 5px;
+  position: relative; /* Ensure badge is positioned relative to the card */
+  cursor: pointer;
+  transition: 0.5s;
+  
+  
+}
+
+.ticket-card.red {
+  flex: 0 0 auto;
+  width: 200px;
+  height: 220px;
+  margin-right: 10px;
+  background-color: white;
+  border-radius: 5px;
+  position: relative; /* Ensure badge is positioned relative to the card */
+  cursor: pointer;
+  transition: 0.5s;
+  
+  
+}
+
+.ticket-card.green:hover {
+  background-color:#d1e7dd;
+  margin: 5px;
+  transition: 0.5s;
+  
+}
+
+.ticket-card.red:hover {
+  background-color:#e7d1d1;
   margin: 5px;
   transition: 0.5s;
   
