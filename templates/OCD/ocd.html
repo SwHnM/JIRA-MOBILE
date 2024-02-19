@@ -1,6 +1,10 @@
 
 {% extends 'layout.html' %}
 {% block content %}
+<div onclick="history.back()"class="container-fluid d-inline-block">
+    <i class="fa-solid fa-arrow-left m-0"></i>
+    <p class="text-muted d-inline-block ml-5">back</p>
+</div>
 <div class="container-fluid">
     <br>
         <span id="key" class="badge bg-primary">{{issue_key}}</span>

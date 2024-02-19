@@ -109,14 +109,17 @@
 {% endmacro %}
 
 {% macro sidescroller(name, jql, tickets, color, icon) %}
-<span style="display: inline-block; margin-left: 10px;">
+<div style="margin-bottom: 20px">
+<span style="display: inline-block; margin-left: 10px; width:100%">
     <i class="fa-solid {{icon}} icon-bg {{ color }}"></i>
-    <h2 class="deck-title" style="display: inline-block; vertical-align: middle; margin-left: 10px;">{{ name }}</h2>
+    <h2 style="display: inline-block; vertical-align: middle; margin-left: 10px;">{{ name }}</h2>
+    <h2 class="float-end text-muted fw-light" style="display: inline-block; vertical-align: middle; margin-right: 20px;">{{ tickets | length }}</h2>
 </span>
 
 <section class="ticket-section">
     {% if tickets %}
       <div class="ticket-container">
+        <!-- social media page icons -->
         {% for ticket in tickets %}
           <div class="ticket-card {{ color }} shadow" onclick="location.href='/search/{{ ticket.key }}';">
             {% if ticket.fields.customfield_108529.value == 'Adiyogi' %}
@@ -125,10 +128,16 @@
                 <i class="devi bottom-right-badge"></i>
             {% elif ticket.fields.customfield_108529.value == 'Conscious Planet' %}
                 <i class="fa-solid fa-earth-africa bottom-right-badge" style="font-size: 25px;"></i>
+            {% elif ticket.fields.customfield_108529.value == 'Isha Foundation' %}
+                <img class="bottom-right-badge" height="30" src="/static/assets/icons/ishalogo.png">
+            {% elif ticket.fields.customfield_108529.value == 'Sadhguru' %}
+                <span class="badge bg-dark bottom-right-badge">SG</span>
             {% else %}
                 <span class="badge bottom-right-badge bg-success">{{ ticket.fields.customfield_108529.value }}</span>
             {% endif %}
-            <span class="badge bottom-badge bg-light text-dark ">{{ ticket.key }}</span>
+        <!------------------------------->
+            <span class="badge top-badge bg-light text-dark ">{{ ticket.key }}</span>
+            <span class="badge bottom-badge bg-light text-dark ">{{ ticket.fields.duedate }}</span>
             <div class="ticket-summary">
                 <h6>
                     {{ ticket.fields.summary }}
@@ -140,7 +149,7 @@
       </div>
     {% endif %}
   </section>
-  
+</div>
 
 <style>
 /* colors are taken from bootstrap v 5.3 */
@@ -160,12 +169,21 @@
 
 }
 .icon-bg.green {
-    background-color: #0a3622;
+    background-color: #157347;
 }
 
 .icon-bg.red {
-    background-color: #58151c;
+    background-color: #bd2130;
 }
+
+.icon-bg.blue {
+    background-color: #0b5ed7;
+}
+
+.icon-bg.yellow {
+    background-color: #d39e00;
+}
+
 
 /* for social media page icons */
 .devi {
@@ -265,6 +283,17 @@
   margin-right: 0;
 }
 
+.top-badge {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+}
+.top-right-badge {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+}
+
 .bottom-right-badge {
   position: absolute;
   bottom: 10px;
@@ -278,6 +307,7 @@
 }
 
 .ticket-summary {
+  margin-top: 50px;
   padding: 10px;
   white-space: normal;
 }

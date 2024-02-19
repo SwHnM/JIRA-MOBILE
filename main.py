@@ -64,12 +64,8 @@ def logout():
 @app.route("/jql", methods=["GET", "POST"])
 def jql():
     jql = request.form.get("jql")
-    jql_checkbox = request.form.get("jql_checkbox")
+    
     hide_closed_checkbox = request.form.get('hide_closed_tickets')
-
-
-    if jql_checkbox != "checked":
-        jql = "key = " + jql
 
     if hide_closed_checkbox == 'checked':
         jql = jql + ' AND status not in (delivered, closed, Canceled, cancelled, DONE, Resolved, "Text Delivered")'
@@ -249,7 +245,7 @@ def dashboard():
         
         social_media_account = "customfield_108529"
         
-        fields = ["summary", "description", "assignee", "status", social_media_account]
+        fields = ["summary", "description", "assignee", "status", "duedate", social_media_account]
         
         deck_db = [
             {'name':"My Tickets",

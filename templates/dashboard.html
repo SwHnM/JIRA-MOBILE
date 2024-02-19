@@ -2,30 +2,64 @@
 {% block content %}
 <br>
     <div class="container-fluid d-inline-block">
-        <h5 class="d-inline-block mb-0">Dashboard</h5>
-        <h6 class="d-inline-block mb-0 float-end">{{ username }}</h6>
+        <h6 class="text-muted d-inline-block mb-0">Dashboard</h6>
+        <h6 onclick="location.href='/settings';" class="text-muted d-inline-block mb-0 float-end">{{ username }}</h6>
     </div>
 <br>
 <br>
-<div>
+<div class="container-fluid">
+    <form class="form-group">
+        <div class="input-group mb-5 shadow" style="border-radius: 30px; border-width:1px; border-color:  #ced4da;">
+            <input class='form-control' type="text" placeholder="Search" aria-label="Recipient's username" aria-describedby="button-addon2" style="height:50px; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-right-width:0;" id="searchInput">
+            <button class="btn text-muted bg-white" type="button" id="button-addon2" style="font-size: 20px; border-width: 1px; border-left-width:0; border-right-width:0; border-color: #ced4da;" onclick="searchRedirect()">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <button class="btn text-muted bg-white" type="button" id="button-addon1" onclick="location.href='/search';" style="font-size: 20px; border-width: 1px; border-left-width:0; border-color: #ced4da; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
+                <i class="fa-solid fa-gear" style="margin-right:10px"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+
+
+<div class="container-fluid" id="mainContent">
+
     {% for deck in decks %}
             {% from "/Components/macros.html" import sidescroller %}
             {{ sidescroller(deck['name'], deck['jql'], deck['tickets'], deck['color'], deck['icon']) }}
     {% endfor %}
+<br>
 
 </div>
-<br>
+
 <script>
-    function submitForm(issueKey) {
-        document.getElementById("form_" + issueKey).submit();
+    // Function to hide the main content when search bar is clicked
+    document.getElementById('searchInput').addEventListener('focus', function() {
+        document.getElementById('mainContent').style.opacity = '0'; // Change opacity to hide
+    });
+
+    // Function to show the main content when search bar loses focus
+    document.getElementById('searchInput').addEventListener('blur', function() {
+        document.getElementById('mainContent').style.opacity = '1'; // Change opacity to show
+    });
+
+    // Function to handle search redirection
+    function searchRedirect() {
+        var searchValue = document.getElementById('searchInput').value;
+        if (searchValue.trim() !== "") {
+            window.location.href = "/search/" + encodeURIComponent(searchValue);
+        }
     }
 </script>
 
 <style>
-    .list-group-item:hover {
-  background-color:aliceblue;
-}
+#mainContent {
+        transition: opacity 0.3s ease; /* Add transition effect for opacity */
+    }
 
 </style>
+
+
 {% endblock %}
 
