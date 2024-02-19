@@ -253,6 +253,11 @@ def dashboard():
              'color': 'red',
              'icon': 'fa-ghost'},
             
+            {'name':"Proofing Tickets",
+             'jql': 'assignee = harry.s AND status = "W/Publ- Proofing"',
+             'color': 'green',
+             'icon': 'fa-chess-pawn'},
+
             {'name':"Klemen's Tickets",
              'jql': 'assignee = klemen.b AND status not in ("text delivered", "EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")',
              'color': 'green',
@@ -262,6 +267,7 @@ def dashboard():
              'jql': 'issueKey in issueHistory() order by lastViewed DESC',
              'color': 'green',
              'icon': 'fa-chess-pawn'},
+             
         ]
 
         for deck in deck_db:
