@@ -1,36 +1,60 @@
 {% extends 'layout.html' %}
 {% block content %}
-<br>
-    <div class="container-fluid d-inline-block">
-        <h6 class="text-muted d-inline-block mb-0">Dashboard</h6>
-        <h6 onclick="location.href='/settings';" class="text-muted d-inline-block mb-0 float-end">{{ username }}</h6>
+<div class='bg-light no-margin'>
+    <div class="container-fluid d-inline-block " style=" margin-left: 0;">
+        <h6 class="text-muted d-inline-block">Dashboard</h6>
+        <h6 onclick="location.href='/settings';" class="text-muted d-inline-block float-end">{{ username }}</h6>
     </div>
 <br>
 <br>
-<div class="container-fluid">
-    <form class="form-group">
-        <div class="input-group mb-5 shadow" style="border-radius: 30px; border-width:1px; border-color:  #ced4da;">
-            <input class='form-control' type="text" placeholder="Search" aria-label="Recipient's username" aria-describedby="button-addon2" style="height:50px; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-right-width:0;" id="searchInput">
-            <button class="btn text-muted bg-white" type="button" id="button-addon2" style="font-size: 20px; border-width: 1px; border-left-width:0; border-right-width:0; border-color: #ced4da;" onclick="searchRedirect()">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-            <button class="btn text-muted bg-white" type="button" id="button-addon1" onclick="location.href='/search';" style="font-size: 20px; border-width: 1px; border-left-width:0; border-color: #ced4da; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
-                <i class="fa-solid fa-gear" style="margin-right:10px"></i>
-            </button>
-        </div>
-    </form>
+    <div class="container-fluid bg-light">
+        <form class="form-group">
+            <div class="input-group shadow" style="border-radius: 30px;">
+                <input class='form-control' type="text" placeholder="Search" aria-label="Recipient's username" aria-describedby="button-addon2" style="height:50px; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-width:0px; border-right-width:0;" id="searchInput">
+                <button class="btn text-muted bg-white" type="button" id="button-addon2" style="font-size: 20px; border-width: 0px; border-left-width:0; border-right-width:0; border-color: #ced4da;" onclick="searchRedirect()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button class="btn text-muted bg-white" type="button" id="button-addon1" onclick="location.href='/search';" style="font-size: 20px; border-width: 0px; border-left-width:0; border-color: #ced4da; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
+                    <i class="fa-solid fa-gear" style="margin-right:10px"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
 </div>
 
 
+<div class="container-fluid no-margin" id="mainContent">
 
-<div class="container-fluid" id="mainContent">
+<div id="contextual-menu">
+    <div class="buttonGrouping">
+        <button class="menu-button" id="menu-button-1" onclick="toggleSelectMode()" style="background-color: #0b5ed7;"><i class="fa-solid fa-object-ungroup"></i></button>
+        <label for="menu-button-1" class="buttonDescription text-muted">Select</label>
+    </div>
+    <div class="buttonGrouping">
+        <button class="menu-button" id="menu-button-2" style="background-color: #ffc107;"><i class="fa-solid fa-user"></i></button>
+        <label for="menu-button-2" class="buttonDescription text-muted">Assign</label>
+    </div>
+    <div class="buttonGrouping">
+        <button class="menu-button" id="menu-button-3" style="background-color: #6f42c1;"><i class="fa-solid fa-layer-group"></i></button>
+        <label for="menu-button-3" class="buttonDescription text-muted">Queue</label>
+    </div>
+    <div class="buttonGrouping">
+        <button class="menu-button" id="menu-button-4" style="background-color:#adb5bd ;"><i class="fa-solid fa-plus"></i></i></button>
+        <label for="menu-button-4" class="buttonDescription text-muted">New</label>
+    </div>    
+        
+        
+</div>
+
+    <div class="decks">
 
     {% for deck in decks %}
             {% from "/Components/macros.html" import sidescroller %}
             {{ sidescroller(deck['name'], deck['jql'], deck['tickets'], deck['color'], deck['icon']) }}
     {% endfor %}
 <br>
-
+    </div>
 </div>
 
 <script>
@@ -51,12 +75,57 @@
             window.location.href = "/search/" + encodeURIComponent(searchValue);
         }
     }
+
+    // Buttons in menu
+    let selectMode = false;
+    let selectedTickets = [];
+
+    function toggleSelectMode() {
+        selectMode = !selectMode;
+
+    }
 </script>
 
 <style>
 #mainContent {
         transition: opacity 0.3s ease; /* Add transition effect for opacity */
     }
+
+#contextual-menu {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.menu-button {
+    color: white;
+    font-size: 20px;
+    height: 70px;
+    width: 70px;
+    border-width: 0;
+    border-radius: 50%;
+
+}
+
+
+.decks {
+    padding-top: 60px;
+    border-radius: 20px;
+    box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);
+}
+
+.buttonGrouping{
+  display: inline-block;
+  text-align: center;
+}
+
+.buttonDescription{
+  display: block;
+  font-weight: 300;
+}
 
 </style>
 

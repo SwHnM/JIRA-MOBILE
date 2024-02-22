@@ -63,6 +63,8 @@ class Ticket:
                     internal = not comment_props[0]['value']['allow']
                 except:
                     internal = comment_props[0]['value']['internal']
+            else:
+                internal = False
                     
             
             

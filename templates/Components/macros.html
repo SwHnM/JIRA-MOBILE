@@ -1,24 +1,43 @@
-{% macro comment_component(comments) %}
+{% macro topnav(issue_key, fields) %}
+<div class="container-fluid">
+    <div class="row justify-content-between align-items-center">
+        <div class="col-auto">
+            <div onclick="history.back()" class="d-inline-block">
+                <i class="fa-solid fa-arrow-left"></i>
+                <p class="text-muted d-inline-block ml-1">Back</p>
+            </div>
+        </div>
+        <div class="col-auto">
+            <span class="badge bg-light text-dark">{{fields.Status.name}}</span>
+        </div>
+        <div class="col-auto">
+            <p class="badge bg-light text-muted">{{issue_key}}</p>
+        </div>
+        
+    </div>
+</div>
+{% endmacro %}
 
-<h2>Comments</h2>
-<br>
-<div>
+{% macro comment_component(comments) %}
+<div class="bg-light" style="padding:15px;border-radius: 20px; padding-top: 50px; box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);">
     <form method="POST" action="/comment">
         <div class="mb-3 position-relative">
-            <textarea  id="add-comment" class="form-control shadow" rows="3" name="comment" placeholder="Type your comment..."></textarea>
-            <button class="shadow-sm btn btn-primary btn-sm position-absolute bottom-0 end-0 m-1" type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>    
+            <textarea id="add-comment" class="form-control shadow" style="border: 0; border-radius: 10px;"   rows="3" name="comment" placeholder="Type your comment..."></textarea>
+            <button class="shadow-sm btn btn-primary btn position-absolute bottom-0 end-0 m-1" style='border-radius: 10px;' type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>    
         </div>
     </form>
     <br>
-    <div>
+    
+    <div class="bg-light" style="padding-right:10px; padding-left: 10px;">
         <ul class="list-group list-group-flush" style="border:0;">
             {% for comment in comments %}
-            <li class="list-group-item" style="border:0;">
-                <div class="card shadow-sm" style="border:0">
-                    <div class="card-body bg-light">
+            <li class="list-group-item" style="border:0; padding:0; border-radius: 20px;">
+                <div class="card shadow-sm" style="border:0; border-radius: 20px;">
+                    <div class="card-body">
                         <h5 class="card-title">{{ comment.author }}</h5>
                         {% if comment.internal %}
                             <span class="shadow-sm position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"><i class="fa fa-eye-slash"></i></span>
+                        
                         {% endif %}
                         <p class="text">
                             {% for line in comment.body.splitlines() %}
@@ -48,11 +67,23 @@
 
 
 {% macro summary(fields) %}
-<div class="position-relative">
+<div class="card" style="margin:10px; border: none">
+    <div style="max-width: 85%;">
     <h2 class="mb-0">{{ fields.Summary }}</h2>
-    <button class="btn btn-light rounded-circle" id="copyButton" onclick="copyText()">
+    </div>
+    <div>
+    <button class="btn btn-light rounded-circle position-absolute top-0 end-0" id="copyButton" onclick="copyText()" style="margin-left: 10px;">
         <i class="fas fa-copy" style="color: grey;"></i>
     </button>
+        <div class="float-end" style="margin-top: 20px;">
+        {% if fields['Social Media Account'] %}
+                <span class="badge bg-primary">{{fields['Social Media Account'].value}}</span>
+        {% else %}
+            <span class="badge bg-primary">boom</span>
+        </div>
+    {% endif %}
+
+    </div>
 </div>
 <script>
 
@@ -110,18 +141,20 @@
 
 {% macro sidescroller(name, jql, tickets, color, icon) %}
 <div style="margin-bottom: 20px">
-<span style="display: inline-block; margin-left: 10px; width:100%">
+<span style="display: inline-block; margin-left: 10px; margin-bottom: 20px; width:100%">
     <i class="fa-solid {{icon}} icon-bg {{ color }}"></i>
     <h2 style="display: inline-block; vertical-align: middle; margin-left: 10px;">{{ name }}</h2>
     <h2 class="float-end text-muted fw-light" style="display: inline-block; vertical-align: middle; margin-right: 20px;">{{ tickets | length }}</h2>
 </span>
 
+{% if tickets %}
 <section class="ticket-section">
-    {% if tickets %}
+    
       <div class="ticket-container">
         <!-- social media page icons -->
         {% for ticket in tickets %}
-          <div class="ticket-card {{ color }} shadow" onclick="location.href='/search/{{ ticket.key }}';">
+          <div class="ticket-card {{ color }} shadow"      
+          onclick="location.href='/search/{{ ticket.key }}';">
             {% if ticket.fields.customfield_108529.value == 'Adiyogi' %}
                 <i class="adiyogi bottom-right-badge"></i>
             {% elif ticket.fields.customfield_108529.value == 'Linga Bhairavi' %}
@@ -140,16 +173,25 @@
             <span class="badge bottom-badge bg-light text-dark ">{{ ticket.fields.duedate }}</span>
             <div class="ticket-summary">
                 <h6>
-                    {{ ticket.fields.summary }}
+                    {{ ticket.fields.summary | truncate(60) }}
                 </h6>
             </div>
             
           </div>
         {% endfor %}
       </div>
-    {% endif %}
+    {% else %}
   </section>
+{% endif %}
 </div>
+
+<script>
+
+// This works in tandem with the dashboard.html page. 
+
+
+
+</script>
 
 <style>
 /* colors are taken from bootstrap v 5.3 */
@@ -207,7 +249,7 @@
 
 .ticket-section {
   width: 100%;
-  height: 270px;
+  height: 250px;
   overflow-x: auto;
   scrollbar-width: none;
 
@@ -228,6 +270,7 @@
   width: 200px;
   height: 220px;
   margin-right: 10px;
+  margin-left: 10px;
   background-color: #ffffff;
   border: 0 solid #cccccc;
   border-radius: 5px;
@@ -280,7 +323,7 @@
 }
 
 .ticket-card:last-child {
-  margin-right: 0;
+  margin-right: 0px;
 }
 
 .top-badge {
@@ -310,6 +353,7 @@
   margin-top: 50px;
   padding: 10px;
   white-space: normal;
+  word-break: break-all;
 }
 
 
@@ -317,5 +361,141 @@
 
 {% endmacro %}
 
+{% macro workflow(transitions) %}
 
+<div class='verticalscroll'>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        {% for key, value in transitions.items() %}
+            <a href="/transition/{{ value }}"><button type="button" class="btn" style="margin:10px; border-radius: 20px; font-weight: 600; color: white; background-color: #6610f2;">{{ value }}</button></a>
+        {% endfor %}
+    </div>
+</div>
+
+
+<style>
+
+.verticalscroll {
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    
+
+}
+
+
+
+
+.verticalscroll::-webkit-scrollbar {
+    display: none;/* Hide scrollbar for WebKit browsers (e.g. Chrome, Safari) */
+}
+</style>
+{% endmacro %}
+
+
+{% macro fieldlist(fields) %}
+
+<div class='verticalscroll'>
+    {% for key, value in fields.items() %}
+    <div class="field-card shadow" onclick="showExpandedCard(this)">
+        <h6>{{ key }}</h6>
+        <p class="normal-text">{{ value }}</p>
+        <p class="expanded-value" style="display: none;">{{ value }}</p>
+    </div>
+    {% endfor %}  
+</div>
+
+<div id="expanded-card" class="expanded-card-container" style="display: none;">
+    <div class="expanded-card shadow">
+        <span id="expanded-card-close" class="close-btn" onclick="closeExpandedCard()">×</span>
+        <h6 id="expanded-card-title"></h6>
+        <p id="expanded-card-content"></p>
+    </div>
+</div>
+
+<style>
+
+.verticalscroll {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+    padding: 20px;
+}
+
+.field-card {
+    padding: 20px;
+    border-radius: 20px;
+    background-color: #CEE3F6;
+    display: inline-block;
+    width: 200px;
+    height: 300px;
+    margin-right: 10px;
+    cursor: pointer;
+    position: relative; /* Ensure proper positioning of expanded content */
+}
+
+.field-card p {
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+
+.expanded-card-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+}
+
+.expanded-card {
+    justify-content: center;
+    margin-top: 100px;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.close-btn {
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+</style>
+
+<script>
+function showExpandedCard(card) {
+    var title = card.querySelector('h6').textContent;
+    var content = card.querySelector('.expanded-value').textContent;
+    document.getElementById('expanded-card-title').textContent = title;
+    document.getElementById('expanded-card-content').textContent = content;
+    document.getElementById('expanded-card').style.display = 'block';
+}
+
+function closeExpandedCard() {
+    document.getElementById('expanded-card').style.display = 'none';
+}
+
+// Truncate text for normal state
+document.addEventListener('DOMContentLoaded', function() {
+    var normalTextElements = document.querySelectorAll('.normal-text');
+    normalTextElements.forEach(function(element) {
+        var text = element.textContent;
+        if (text.length > 120) {
+            element.textContent = text.substring(0, 120) + '...';
+        }
+    });
+});
+</script>
+
+{% endmacro %}
 

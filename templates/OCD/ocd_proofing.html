@@ -1,19 +1,12 @@
 
 {% extends 'layout.html' %}
 {% block content %}
-<div class="container-fluid">
-    <br>
-        <span id="key" class="badge bg-primary">{{issue_key}}</span>
-        <span class="badge bg-primary">{{fields['Issue Type'].name}}</span>
 
-        <!-- Page won't display if value doesn't exist -->
-        {% if fields['Social Media Account'] %}
-            <span class="badge bg-primary">{{fields['Social Media Account'].value}}</span>
-        {% endif %}
-        <span class="badge bg-primary">{{fields.Status.name}}</span>
 
-    <br>
-    <br>
+<div class="container-fluid no-margin">
+    {% from "/Components/macros.html" import topnav %}
+        {{ topnav(issue_key, fields) }}
+     
     <div class="card" style="border-width:0;">
         {% from "/Components/macros.html" import summary %}
         {{ summary(fields) }}
@@ -21,7 +14,7 @@
 
     <!-- SPECIAL FOR PROOFING PAGE -->
         <div>
-            <div class="card ">
+            <div class="card shadow" style="border: none;">
                 <div class="card-body bg-light">
                     {% for attachment in last_comment.attachments %}
                     <img src="{{ attachment }}" width="100%">
@@ -31,9 +24,13 @@
                 </div>
             
         </div>
-        <div class="d-grid gap-2">
-            <button class="btn btn-success" onclick="location.href='/transition/121'">Approve</button></a>
-            <button class="btn btn-danger" onclick="location.href='/transition/301'">Changes</button>
+        <div class="d-flex gap-2 justify-content-center">
+            <button class="btn shadow btn-success big-square-btn" onclick="location.href='/transition/121'">
+                <i class="fa-solid fa-check"></i>
+            </button>
+            <button class="btn shadow btn-danger big-square-btn" onclick="location.href='/transition/301'">
+                <i class="fa-solid fa-x"></i>
+            </button>
         </div>
         <!-- END SPECIAL FOR PROOFING PAGE -->
 
@@ -77,5 +74,16 @@
             document.getElementById('copyButton').disabled = true;
         });
     </script>
+
+<style>
+    .big-square-btn {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        margin-top: 30px;
+        font-size: 40px;
+        border-radius: 50%;
+    }
+</style>
 
 {% endblock %}

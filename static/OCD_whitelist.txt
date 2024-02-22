@@ -1,0 +1,21 @@
+Description
+Text Due Date
+Due Date
+Event or Campaign
+Imp_DesignPlatform
+Reporter
+Contact Number
+Languages
+Priority
+Created
+Assignee
+Components
+IM_Department Name
+IM_Language
+Request participants
+Vertical
+Imp_Illustration_Requirement
+Imp Social Media Creatives
+Status
+Social Media Account
+Summary

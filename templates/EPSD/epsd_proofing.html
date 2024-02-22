@@ -1,9 +1,7 @@
-
 {% extends 'layout.html' %}
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid no-margin">
     <br>
-        <span class="badge bg-primary">{{issue_key}}</span>
         <span class="badge bg-primary">{{fields['Issue Type'].name}}</span>
 
         <!-- Page won't display if value doesn't exist -->
@@ -17,6 +15,7 @@
         {% from "/Components/macros.html" import summary %}
         {{ summary(fields) }}
         <br>
+    </div>
 
     <!-- SPECIAL FOR PROOFING PAGE -->
         <div>
@@ -48,5 +47,5 @@
 
      {% from "/Components/macros.html" import comment_component %}
     {{ comment_component(comments) }}
-
+</div>
 {% endblock %}

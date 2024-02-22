@@ -158,6 +158,14 @@ def save_issue(issue_key):
             last_comment = {}
 
         if "OCD" in issue_key:
+            whitelist_file = open("static/OCD_whitelist.txt", "r") 
+            data = whitelist_file.read() 
+            whitelist = data.split("\n") 
+            whitelist_file.close()
+            
+            raw_fields = ticket["fields"]
+            fields = {key: raw_fields[key] for key in whitelist if key in raw_fields}
+
             if status == 'w/Publ- Proofing':
                 template = 'OCD/ocd_proofing.html'
             else:
@@ -178,7 +186,7 @@ def save_issue(issue_key):
         else:
             template = 'basic.html'
 
-        return render_template(template, last_comment=last_comment, fields=ticket['fields'], comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
+        return render_template(template, last_comment=last_comment, fields=fields, comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
     
     except Exception as e:
         error_message = str(e)
