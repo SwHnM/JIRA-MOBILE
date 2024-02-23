@@ -1,3 +1,8 @@
+Description
+Internal Due Date
+Due Date
+Event or Campaign
+Imp_DesignPlatform
 Reporter
 Created
 Assignee
@@ -6,5 +11,4 @@ Status
 Social Media Account
 Issue Type
 Summary
-Description
 Contact

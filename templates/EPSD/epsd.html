@@ -1,70 +1,24 @@
-
 {% extends 'layout.html' %}
 {% block content %}
 
 {% from "/Components/macros.html" import topnav %}
-{{ topnav() }}
+{{ topnav(issue_key, fields) }}
 
-<div class="container-fluid no-margin">
-    <br>
-        <span class="badge bg-primary">{{issue_key}}</span>
-        <span class="badge bg-primary">{{fields['Issue Type'].name}}</span>
 
-        <!-- Page won't display if value doesn't exist -->
-        {% if fields['Social Media Account'] %}
-            <span class="badge bg-primary">{{fields['Social Media Account'].value}}</span>
-        {% endif %}
-        <span class="badge bg-primary">{{fields.Status.name}}</span>
-
-    
-    <br>
-    <br>
-    <div class="card" style="border-width:0;">
-        {% from "/Components/macros.html" import summary %}
-        {{ summary(fields) }}
-        <br>
-            
+{% from "/Components/macros.html" import summary %}
+{{ summary(fields) }}
+<br>
         
-        <div class="accordion accordion-flush" id="accordionFlushExample">
-            <!-- Accordion 2 -->
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="flush-headingOne">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                        Description
-                    </button>
-                </h2>
-                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne">
-                    <div class="accordion-body">{{ fields.Description | safe}}</div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="flush-headingThree">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
-                        All Details
-                    </button>
-                </h2>
-                <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree">
-                    <div class="accordion-body">
-                        {% for key, value in fields.items() %}
-                        <div class="container">
-                            <h6>{{ key }}</h1>
-                            <p>{{ value }}</h2>
-                        </div>
-                        <br>
-                        <br>
-                        {% endfor %}   
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        {% from "/Components/macros.html" import workflow %}
-        {{ workflow(transitions) }}
+{% from "/Components/macros.html" import fieldlist %}
+{{ fieldlist(fields) }}
 
-     <!-- Comments -->
-     <br>
+{% from "/Components/macros.html" import workflow %}
+{{ workflow(transitions) }}
 
-     {% from "/Components/macros.html" import comment_component %}
-    {{ comment_component(comments) }}
-</div>
+<!-- Comments -->
+{% from "/Components/macros.html" import comment_component %}
+{{ comment_component(comments) }}
+
+
 {% endblock %}

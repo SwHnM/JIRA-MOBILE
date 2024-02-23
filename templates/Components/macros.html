@@ -21,9 +21,12 @@
 {% macro comment_component(comments) %}
 <div class="bg-light" style="padding:15px;border-radius: 20px; padding-top: 50px; box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);">
     <form method="POST" action="/comment">
-        <div class="mb-3 position-relative">
-            <textarea id="add-comment" class="form-control shadow" style="border: 0; border-radius: 10px;"   rows="3" name="comment" placeholder="Type your comment..."></textarea>
-            <button class="shadow-sm btn btn-primary btn position-absolute bottom-0 end-0 m-1" style='border-radius: 10px;' type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>    
+        <div id='add-comment-container' class="mb-3 position-relative" onclick="expandCommentBox()">
+            <textarea id="add-comment" class="form-control shadow" name="comment" placeholder="Type your comment..."></textarea>
+            <div>
+                <button id="public-comment" class="shadow-sm btn btn-primary position-absolute bottom-0 end-0" style='border-radius: 0px 0 10px 0; height: 50px; width:50px; transition: ease 0.3s;' type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                <button id="private-comment" class="shadow-sm btn btn-warning position-absolute top-0 end-0" style='border-radius: 0px 10px 0 0; height: 50px; width:50px; transition: ease 0.3s;' type="submit"><i class="fa fa-eye-slash"></i></i></button>      
+            </div>
         </div>
     </form>
     <br>
@@ -63,6 +66,32 @@
         <br>
     </div>
 </div>
+
+<script>
+    function expandCommentBox() {
+        document.getElementById('add-comment-container').style.height= '200px'
+        document.getElementById('public-comment').style.height= '100px'
+        document.getElementById('private-comment').style.height= '100px'
+
+    }
+</script>
+
+<style>
+    #add-comment-container {
+        border: 0;
+        border-radius: 10px;
+        height: 100px;
+        transition: ease 0.3s
+    }
+   
+    #add-comment {
+        border: 0;
+        border-radius: 10px;
+        height: 100%;
+        transition: ease 0.3s;
+        padding-right: 50px;
+    }
+</style>
 {% endmacro %}
 
 
@@ -78,8 +107,6 @@
         <div class="float-end" style="margin-top: 20px;">
         {% if fields['Social Media Account'] %}
                 <span class="badge bg-primary">{{fields['Social Media Account'].value}}</span>
-        {% else %}
-            <span class="badge bg-primary">boom</span>
         </div>
     {% endif %}
 
@@ -140,49 +167,50 @@
 {% endmacro %}
 
 {% macro sidescroller(name, jql, tickets, color, icon) %}
-<div style="margin-bottom: 20px">
-<span style="display: inline-block; margin-left: 10px; margin-bottom: 20px; width:100%">
-    <i class="fa-solid {{icon}} icon-bg {{ color }}"></i>
-    <h2 style="display: inline-block; vertical-align: middle; margin-left: 10px;">{{ name }}</h2>
-    <h2 class="float-end text-muted fw-light" style="display: inline-block; vertical-align: middle; margin-right: 20px;">{{ tickets | length }}</h2>
-</span>
 
-{% if tickets %}
-<section class="ticket-section">
-    
-      <div class="ticket-container">
-        <!-- social media page icons -->
-        {% for ticket in tickets %}
-          <div class="ticket-card {{ color }} shadow"      
-          onclick="location.href='/search/{{ ticket.key }}';">
-            {% if ticket.fields.customfield_108529.value == 'Adiyogi' %}
-                <i class="adiyogi bottom-right-badge"></i>
-            {% elif ticket.fields.customfield_108529.value == 'Linga Bhairavi' %}
-                <i class="devi bottom-right-badge"></i>
-            {% elif ticket.fields.customfield_108529.value == 'Conscious Planet' %}
-                <i class="fa-solid fa-earth-africa bottom-right-badge" style="font-size: 25px;"></i>
-            {% elif ticket.fields.customfield_108529.value == 'Isha Foundation' %}
-                <img class="bottom-right-badge" height="30" src="/static/assets/icons/ishalogo.png">
-            {% elif ticket.fields.customfield_108529.value == 'Sadhguru' %}
-                <span class="badge bg-dark bottom-right-badge">SG</span>
-            {% else %}
-                <span class="badge bottom-right-badge bg-success">{{ ticket.fields.customfield_108529.value }}</span>
-            {% endif %}
-        <!------------------------------->
-            <span class="badge top-badge bg-light text-dark ">{{ ticket.key }}</span>
-            <span class="badge bottom-badge bg-light text-dark ">{{ ticket.fields.duedate }}</span>
-            <div class="ticket-summary">
-                <h6>
-                    {{ ticket.fields.summary | truncate(60) }}
-                </h6>
+<div>
+    <div style="display: flex; align-items: center; padding: 20px;">
+        <i class="fa-solid {{icon}} icon-bg {{ color }}"></i>
+        <h2 style="margin-left: 10px;">{{ name }}</h2>
+        <h2 class="fw-light text-muted" style="margin-left: auto;">{{ tickets | length }}</h2>
+    </div>
+
+    {% if tickets %}
+    <div class="ticket-section">
+        
+        <div class="ticket-container">
+            <!-- social media page icons -->
+            {% for ticket in tickets %}
+            <div class="ticket-card {{ color }} shadow"      
+            onclick="location.href='/search/{{ ticket.key }}';">
+                {% if ticket.fields.customfield_108529.value == 'Adiyogi' %}
+                    <i class="adiyogi bottom-right-badge"></i>
+                {% elif ticket.fields.customfield_108529.value == 'Linga Bhairavi' %}
+                    <i class="devi bottom-right-badge"></i>
+                {% elif ticket.fields.customfield_108529.value == 'Conscious Planet' %}
+                    <i class="fa-solid fa-earth-africa bottom-right-badge" style="font-size: 25px;"></i>
+                {% elif ticket.fields.customfield_108529.value == 'Isha Foundation' %}
+                    <img class="bottom-right-badge" height="30" src="/static/assets/icons/ishalogo.png">
+                {% elif ticket.fields.customfield_108529.value == 'Sadhguru' %}
+                    <span class="badge bg-dark bottom-right-badge">SG</span>
+                {% else %}
+                    <span class="badge bottom-right-badge bg-success">{{ ticket.fields.customfield_108529.value }}</span>
+                {% endif %}
+            <!------------------------------->
+                <span class="badge top-badge bg-light text-dark ">{{ ticket.key }}</span>
+                <span class="badge bottom-badge bg-light text-dark ">{{ ticket.fields.duedate }}</span>
+                <div class="ticket-summary">
+                    <h6>
+                        {{ ticket.fields.summary | truncate(60) }}
+                    </h6>
+                </div>
+                
             </div>
-            
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-  </section>
-{% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        </div>
+    {% endif %}
 </div>
 
 <script>
@@ -396,7 +424,7 @@
 
 <div class='verticalscroll'>
     {% for key, value in fields.items() %}
-    <div class="field-card shadow" onclick="showExpandedCard(this)">
+    <div class="field-card bg-light shadow" onclick="showExpandedCard(this)">
         <h6>{{ key }}</h6>
         <p class="normal-text">{{ value }}</p>
         <p class="expanded-value" style="display: none;">{{ value }}</p>
@@ -425,7 +453,6 @@
 .field-card {
     padding: 20px;
     border-radius: 20px;
-    background-color: #CEE3F6;
     display: inline-block;
     width: 200px;
     height: 300px;
