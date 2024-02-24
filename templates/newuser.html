@@ -1,0 +1,15 @@
+
+{% extends 'layout.html' %}
+{% block content %}
+<h1>New User</h1>
+<br>
+<h2>Welcome, {{ username }}! </h2>
+<h3>Let's get you set up.</h3>
+
+<form action="/newuser" method="POST">
+<input name="firstname" placeholder="First Name">
+<input name="lastname" placeholder="Last Name">
+<button type='submit' class="btn">I'm Ready</button>
+</form>
+<br>
+{% endblock %}

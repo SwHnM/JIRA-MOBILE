@@ -25,8 +25,6 @@ def full_comment(issue_key, username, password):
     return output
 
 def raw_search(jql, fields, username, password):
-
-   
     auth_raw = f'{username}:{password}'
     auth_encode = auth_raw.encode("ascii") 
     auth_b64 = base64.b64encode(auth_encode)
@@ -44,6 +42,8 @@ def raw_search(jql, fields, username, password):
     }
 
     response = requests.post(url, headers=headers, json=payload)
+    print(response)
+
     output = response.json()
     tickets = output['issues']
 

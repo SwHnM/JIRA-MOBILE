@@ -25,7 +25,7 @@
             <textarea id="add-comment" class="form-control shadow" name="comment" placeholder="Type your comment..."></textarea>
             <div>
                 <button id="public-comment" class="shadow-sm btn btn-primary position-absolute bottom-0 end-0" style='border-radius: 0px 0 10px 0; height: 50px; width:50px; transition: ease 0.3s;' type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-                <button id="private-comment" class="shadow-sm btn btn-warning position-absolute top-0 end-0" style='border-radius: 0px 10px 0 0; height: 50px; width:50px; transition: ease 0.3s;' type="submit"><i class="fa fa-eye-slash"></i></i></button>      
+                <button id="private-comment" formaction="/privatecomment" class="shadow-sm btn btn-warning position-absolute top-0 end-0" style='border-radius: 0px 10px 0 0; height: 50px; width:50px; transition: ease 0.3s;' type="submit"><i class="fa fa-eye-slash"></i></i></button>      
             </div>
         </div>
     </form>
@@ -212,14 +212,6 @@
         </div>
     {% endif %}
 </div>
-
-<script>
-
-// This works in tandem with the dashboard.html page. 
-
-
-
-</script>
 
 <style>
 /* colors are taken from bootstrap v 5.3 */
@@ -421,15 +413,16 @@
 
 
 {% macro fieldlist(fields) %}
-
 <div class='verticalscroll'>
+    <div class="">
     {% for key, value in fields.items() %}
-    <div class="field-card bg-light shadow" onclick="showExpandedCard(this)">
+    <div class="card field-card bg-light shadow" onclick="showExpandedCard(this)">
         <h6>{{ key }}</h6>
         <p class="normal-text">{{ value }}</p>
         <p class="expanded-value" style="display: none;">{{ value }}</p>
     </div>
     {% endfor %}  
+</div>
 </div>
 
 <div id="expanded-card" class="expanded-card-container" style="display: none;">
@@ -441,24 +434,20 @@
 </div>
 
 <style>
-
 .verticalscroll {
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-    white-space: nowrap;
-    padding: 20px;
+    overflow-y: auto;
+    height: 500px
 }
 
 .field-card {
     padding: 20px;
     border-radius: 20px;
-    display: inline-block;
-    width: 200px;
-    height: 300px;
-    margin-right: 10px;
+    max-width: 50%; /* Expand the card to fill the grid cell */
+    max-height: 300px;
     cursor: pointer;
-    position: relative; /* Ensure proper positioning of expanded content */
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .field-card p {
@@ -496,7 +485,6 @@
     font-size: 24px;
     cursor: pointer;
 }
-
 </style>
 
 <script>
@@ -525,4 +513,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 {% endmacro %}
+
 

@@ -55,9 +55,37 @@
     {% endfor %}
 <br>
     </div>
+
+
+    <div>
+    
+        <form class="form-group" action="/newdeck" method="POST" style="margin-top: 10px; padding-bottom: 60px;">
+            <h2 class="text-muted" style="margin-left: 20px;">Add Deck</h2>
+            <div style="padding: 20px">
+                <input name="deck-name" class="shadow-sm form-control bg-light" style="border-radius: 20px; border: none;" placeholder="Name">
+                <br><input name="deck-jql" class="shadow-sm form-control bg-light" style="border-radius: 20px; border: none;" placeholder="JQL">
+                <br><input name="deck-color" class="shadow-sm form-control bg-light" style="border-radius: 20px; border: none;" placeholder="red, green, blue, or yellow">
+                <br><input name="deck-icon" class="shadow-sm form-control bg-light" style="border-radius: 20px; border: none;"value='fa-dragon' placeholder="fa-dragon, or anything from fontawesome">
+                
+            </div>
+            <div style=" width: 100%; text-align: center; margin-top: 30px;">
+                <button type="submit" class="menu-button shadow" id="add-deck" style="background-color:#adb5bd ;"><i class="fa-solid fa-plus"></i></i></button>
+            </div>
+        </form>
+    
+
+    
+        
+
+        
+    </div>
 </div>
 
 <script>
+    function openForm() {
+        document.getElementById('form-wrapper').style.height= ''
+    }
+
     // Function to hide the main content when search bar is clicked
     document.getElementById('searchInput').addEventListener('focus', function() {
         document.getElementById('mainContent').style.opacity = '0'; // Change opacity to hide
@@ -112,7 +140,7 @@
 
 
 .decks {
-    padding-top: 60px;
+    padding-top: 20px;
     border-radius: 20px;
     box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);
 }

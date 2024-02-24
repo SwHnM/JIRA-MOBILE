@@ -49,7 +49,7 @@ class JIRAService:
         self.jira.add_comment(issue, comment)
 
     def makePrivateComment(self, issue, comment):
-        self.jira.add_comment(issue, comment, visibility={'type': 'group', 'value': '{"internal":true}'}) 
+        self.jira.add_comment(issue, comment, is_internal=True)
 
     def get_transitions(self, issue_key):
         transitions = self.jira.transitions(issue_key)

@@ -6,7 +6,7 @@ from dateParser import parse_date
 from commentParser import extract_attachment_references, clean_comment
 from loadTicket import Ticket
 from directApiRequests import raw_search
-
+import json
 import traceback
 
 #####
@@ -28,31 +28,66 @@ app.secret_key = os.urandom(24)  # set a secret key for sessions
 @app.route("/", methods=('GET', 'POST'))
 @app.route("/login", methods=('GET', 'POST'))
 def login():
-    
-
     return render_template('login.html')
 
 @app.route("/auth", methods=('GET', 'POST'))
-
 def auth():
     try:
-        session["username"] = request.form.get("usern")
-        session["password"] = request.form.get("passw")
-
-
+        username = request.form.get("usern")
+        password = request.form.get("passw")
+        session["username"] = username
+        session["password"] = password
         session.permanent = True
-        app.permanent_session_lifetime = datetime.timedelta(minutes=30)
+        app.permanent_session_lifetime = datetime.timedelta(minutes=60)
 
+## for user configs
+        remove_dots= username.replace('.', '-')
+        config_filename=f'{remove_dots}.json'
+        config_path = f"static/users/{config_filename}"
 
+        session['config_path'] = config_path
 
-        return redirect('/dashboard')
+        if os.path.isfile(config_path):
+            return redirect('/dashboard')
+        else:
+            return render_template('newuser.html', username=username)
 
-        
-
-    
     except:
 
         return redirect("/login")
+    
+@app.route("/newuser", methods=('GET', 'POST'))
+
+def newuser():
+
+    username = session.get('username')
+    firstname = request.form.get('firstname')
+    lastname = request.form.get('lastname')
+    config_path = session.get('config_path')
+
+    default_decks = [
+         {
+                "name": "My Tickets",
+                "jql": "assignee = currentUser() AND status not in ('text delivered','EngPub Review', closed, Canceled, cancelled, DONE, Resolved, 'Pending Requester Review', 'Pending Requester Clarification', 'W/Cust-Clar (Text)', 'W/Cust-Review (Text)', 'Text Under Review')",
+                "color": "red",
+                "icon": "fa-ghost"
+            },
+    ]
+
+
+    user = {
+        "username":username,
+        "firstname":firstname,
+        "lastname":lastname,
+        "decks": default_decks
+        }
+    
+    user_json_object = json.dumps(user, indent=4)
+
+    with open(config_path, "w") as outfile:
+        outfile.write(user_json_object)
+
+    return redirect('/dashboard')
     
 @app.route("/logout", methods=('GET', 'POST'))
 
@@ -94,6 +129,51 @@ def comment():
     print(comment)
 
     return redirect(path)
+
+@app.route("/privatecomment", methods=["GET", "POST"])
+def privatecomment():
+    username = session.get("username")
+    password = session.get("password")
+    issue = session.get('issue_key')
+    comment = request.form.get("comment")
+    path = '/search/' + issue
+
+    jira= JIRAService(username, password, "https://servicedesk.isha.in")
+
+    jira.makePrivateComment(issue, comment)
+    
+    print(comment)
+
+    return redirect(path)
+
+
+@app.route("/newdeck", methods=('GET', 'POST'))
+
+def newdeck():
+    name= request.form.get('deck-name')
+    jql= request.form.get('deck-jql')
+    color= request.form.get('deck-color')
+    icon= request.form.get('deck-icon')
+
+
+    config_path = session.get("config_path")
+
+    with open(config_path, 'r') as userdata:
+        user = json.load(userdata)
+        decks = user['decks']
+
+        decks.append({
+            "name": name,
+            "jql": jql,
+            "color": color,
+            "icon": icon
+        })
+
+    # Write the updated user data back to the file
+    with open(config_path, 'w') as userdata:
+        json.dump(user, userdata)
+        
+    return redirect('/dashboard')
     
     
 
@@ -248,45 +328,33 @@ def dashboard():
     try:
         username = session.get("username")
         password = session.get("password")
+        config_path = session.get("config_path")
+
+## loads info from config file
+        userdata = open(config_path)
+        user = json.load(userdata)
+        
+        decks = user['decks']
 
 ### decks is refering to the horizontal display of cards.
         
         social_media_account = "customfield_108529"
         
         fields = ["summary", "description", "assignee", "status", "duedate", social_media_account]
-        
-        deck_db = [
-            {'name':"My Tickets",
-             'jql': f'assignee = currentUser() AND status not in ("text delivered","EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")',
-             'color': 'red',
-             'icon': 'fa-ghost'},
-            
-            {'name':"Proofing Tickets",
-             'jql': 'assignee = harry.s AND status = "W/Publ- Proofing"',
-             'color': 'green',
-             'icon': 'fa-chess-pawn'},
 
-            {'name':"Klemen's Tickets",
-             'jql': 'assignee = klemen.b AND status not in ("text delivered", "EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")',
-             'color': 'green',
-             'icon': 'fa-dragon'},
-
-            {'name':"Recent Tickets",
-             'jql': 'issueKey in issueHistory() order by lastViewed DESC',
-             'color': 'green',
-             'icon': 'fa-chess-pawn'},
-             
-        ]
-
-        for deck in deck_db:
+        for deck in decks:
             jql = deck['jql']
             tickets = raw_search(jql, fields, username, password)
             deck['tickets'] = tickets
+            print(tickets)
 
-    
-        # jql= 'assignee =' + username + ' AND type != "Imp New Content" AND type != "Imp Proofing" AND status not in ("text delivered", "EngPub Review", closed, Canceled, cancelled, DONE, Resolved, "Pending Requester Review", "Pending Requester Clarification", "W/Cust-Clar (Text)", "W/Cust-Review (Text)", "Text Under Review")'
-
-    except:
-        return redirect("/login")
         
-    return render_template('dashboard.html', decks = deck_db, last_jql=jql, username=username)
+
+
+    except Exception as e:
+        print(e)
+        # traceback.print_exc()
+        return redirect('/login')
+        
+    return render_template('dashboard.html', decks = decks, last_jql=jql, username=username)
+
