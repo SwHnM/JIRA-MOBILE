@@ -1,0 +1,15 @@
+fa-dragon
+fa-pizza-slice
+fa-pepper-hot
+fa-hat-wizard
+fa-chess-pawn
+fa-mug-hot
+fa-carrot
+fa-chess-knight
+fa-skull-crossbones
+fa-bug
+fa-box-archive
+fa-poop
+fa-seedling
+fa-bone
+fa-frog

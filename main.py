@@ -172,7 +172,7 @@ def newdeck():
     # Write the updated user data back to the file
     with open(config_path, 'w') as userdata:
         json.dump(user, userdata)
-        
+
     return redirect('/dashboard')
     
     
@@ -316,7 +316,6 @@ def transition(id):
 @app.route("/settings")
 def settings():
     username = session.get("username")
-    password = session.get("password")
     
     if username:
         return render_template('settings.html', user=username)
@@ -346,9 +345,11 @@ def dashboard():
             jql = deck['jql']
             tickets = raw_search(jql, fields, username, password)
             deck['tickets'] = tickets
-            print(tickets)
 
-        
+        icons_file = open("static/icons.txt", "r") 
+        data = icons_file.read() 
+        icons = data.split("\n") 
+        icons_file.close()
 
 
     except Exception as e:
@@ -356,5 +357,5 @@ def dashboard():
         # traceback.print_exc()
         return redirect('/login')
         
-    return render_template('dashboard.html', decks = decks, last_jql=jql, username=username)
+    return render_template('dashboard.html', decks = decks, icons=icons, last_jql=jql, username=username)
 

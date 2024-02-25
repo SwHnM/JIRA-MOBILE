@@ -57,19 +57,37 @@
     </div>
 
 
-    <div>
+    <div class="card bg-light" style="border-radius: 20px; border:0;">
     
-        <form class="form-group" action="/newdeck" method="POST" style="margin-top: 10px; padding-bottom: 60px;">
+        <form id="new-deck-form" class="form-group" action="/newdeck" method="POST" style="margin-top: 10px; padding-bottom: 60px;">
             <h2 class="text-muted" style="margin-left: 20px;">Add Deck</h2>
             <div style="padding: 20px">
-                <input name="deck-name" class="shadow-sm form-control bg-light" style="border-radius: 20px; border: none;" placeholder="Name">
-                <br><input name="deck-jql" class="shadow-sm form-control bg-light" style="border-radius: 20px; border: none;" placeholder="JQL">
-                <br><input name="deck-color" class="shadow-sm form-control bg-light" style="border-radius: 20px; border: none;" placeholder="red, green, blue, or yellow">
-                <br><input name="deck-icon" class="shadow-sm form-control bg-light" style="border-radius: 20px; border: none;"value='fa-dragon' placeholder="fa-dragon, or anything from fontawesome">
-                
+                <span id="error" class="error"></span><br>
+                <input name="deck-name" class="form-control" style="border-radius: 30px; height:50px;" placeholder="Name">
+                <br><input id="deck-jql" name="deck-jql" class="form-control" style="border-radius: 30px; height:50px;" placeholder="JQL">
+                <div class="container" style="margin-top: 30px; text-align: center;">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input bg-danger" type="radio" name="deck-color" value="red">
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input bg-primary" type="radio" name="deck-color" value="blue">
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input bg-warning" type="radio" name="deck-color" value="yellow">
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input bg-success" type="radio" name="deck-color" value="green">
+                    </div>
+                </div>
+                <div class="container" style="margin-top: 30px;">
+                    {% for icon in icons %}
+                        <input type="radio" name="deck-icon" value="{{icon}}" id="{{icon}}" class="icon-checkbox">
+                        <label for="{{icon}}" class="icon-label"><i class="icon-picker fa-solid {{icon}}"></i></label>
+                    {% endfor %}
+                </div>   
             </div>
             <div style=" width: 100%; text-align: center; margin-top: 30px;">
-                <button type="submit" class="menu-button shadow" id="add-deck" style="background-color:#adb5bd ;"><i class="fa-solid fa-plus"></i></i></button>
+                <button type="submit" class="menu-button bg-primary" id="add-deck" style="background-color:gray ;"><i class="fa-solid fa-plus"></i></i></button>
             </div>
         </form>
     
@@ -80,6 +98,8 @@
         
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     function openForm() {
@@ -112,6 +132,51 @@
         selectMode = !selectMode;
 
     }
+
+// Add deck
+
+    function validateJQL(jql) {
+    // Trim leading and trailing whitespace
+    jql = jql.trim();
+
+    // Regular expression to match basic JQL syntax
+    var jqlRegex = /^(?:project|issueType|status|assignee|reporter|priority|resolution|created|updated|resolved|due|watcher|text|comment|votes|watching|component|affectedVersion|fixVersion|label|linkedIssue|subtask|Epic Link)\s*([=!<>]=?|in|not in|was|was not|is|is not|changed)\s*("[^"]+"|[^ ]+)/g;
+
+    if (!jqlRegex.test(jql)) {
+        throw new Error('Invalid JQL syntax.');
+    }
+
+    return true;
+}
+
+document.getElementById('new-deck-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    var jql = document.getElementById('deck-jql').value.trim();
+    var errorSpan = document.getElementById('error');
+
+    try {
+        validateJQL(jql);
+        // If validation successful
+        errorSpan.textContent = ''; // Clear any previous error messages
+        document.getElementById("new-deck-form").submit();
+    } catch (err) {
+        errorSpan.textContent = err.message;
+    }
+});
+
+// For changing the color of the icon bg based on color selector
+$(document).ready(function() {
+    console.log("Document ready function called.");
+    $('input[name="deck-color"]').change(function() {
+      console.log("Color changed");
+      var selectedColor = $('input[name="deck-color"]:checked').val();
+      console.log("Selected color: " + selectedColor);
+      $('.icon-label').css('background-color', selectedColor + '!important');
+    });
+  });
+
+
 </script>
 
 <style>
@@ -153,6 +218,50 @@
 .buttonDescription{
   display: block;
   font-weight: 300;
+}
+
+
+.form-check-input {
+    width: 40px;
+    height: 40px;
+    border:0;
+    transition: 0.3s ease
+}
+
+.form-check-input:checked {
+    border: 5px;
+    box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Hide the radio button */
+.icon-checkbox {
+    display: none;
+}
+
+/* Style the label to resemble a checkbox */
+.icon-label {
+    display: inline-block;
+    padding-top: 15px;
+    width: 60px; /* Adjust size as needed */
+    height: 60px; /* Adjust size as needed */
+    margin: 10px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px; /* Center the icon vertically */
+    cursor: pointer;
+    box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);
+}
+
+/* Style the icon inside the label */
+.icon-picker {
+    font-size: 30px;
+    color: gray; /* Default icon color */
+}
+
+/* When the checkbox is checked, change the icon color to blue */
+.icon-checkbox:checked + .icon-label i {
+    color: black;
 }
 
 </style>
