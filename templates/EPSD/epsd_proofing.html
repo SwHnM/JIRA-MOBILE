@@ -1,14 +1,8 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="container-fluid no-margin">
-    <br>
-        <span class="badge bg-primary">{{fields['Issue Type'].name}}</span>
-
-        <!-- Page won't display if value doesn't exist -->
-        {% if fields['Social Media Account'] %}
-            <span class="badge bg-primary">{{fields['Social Media Account'].value}}</span>
-        {% endif %}
-        <span class="badge bg-primary">{{fields.Status.name}}</span>
+    {% from "/Components/macros.html" import topnav %}
+        {{ topnav(issue_key, fields, queue_mode_active) }}
 
     
     <div class="card" style="border-width:0;">
@@ -16,6 +10,7 @@
         {{ summary(fields) }}
         <br>
     </div>
+    
 
     <!-- SPECIAL FOR PROOFING PAGE -->
         <div>

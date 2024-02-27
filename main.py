@@ -176,7 +176,27 @@ def newdeck():
     return redirect('/dashboard')
     
     
+@app.route("/queue", methods=('GET', 'POST'))
 
+def queue():
+
+    if not session.get('queued_tickets'):
+        tickets_form = request.form.items()
+        session['queued_tickets'] = [key for key, _ in tickets_form]
+        session['queue_mode_active'] = True
+
+    if session['queued_tickets']:
+        current_ticket = session['queued_tickets'].pop(0)
+        return redirect(f'/search/{current_ticket}')
+    else:
+        session['queue_mode_active'] = False
+        return redirect('/queue_complete')
+
+
+
+
+
+    
 
 
 @app.route("/search")
@@ -221,7 +241,7 @@ def search():
 
 # This gets the issue key and saves it in state.
 @app.route("/search/<issue_key>")
-def save_issue(issue_key):
+def display_issue(issue_key):
     try:
         session["issue_key"] = issue_key
         username = session.get("username")
@@ -236,6 +256,12 @@ def save_issue(issue_key):
             last_comment = comments[0]
         else:
             last_comment = {}
+
+        queue_mode_active=False
+
+        if session.get('queue_mode_active'):
+            queue_mode_active=True
+
 
         if "OCD" in issue_key:
             whitelist_file = open("static/OCD_whitelist.txt", "r") 
@@ -266,7 +292,7 @@ def save_issue(issue_key):
         else:
             template = 'basic.html'
 
-        return render_template(template, last_comment=last_comment, fields=fields, comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key)
+        return render_template(template, last_comment=last_comment, fields=fields, comments=ticket['comments'], transitions=ticket['transitions'], issue_key=issue_key, queue_mode_active=queue_mode_active)
     
     except Exception as e:
         error_message = str(e)
@@ -358,4 +384,8 @@ def dashboard():
         return redirect('/login')
         
     return render_template('dashboard.html', decks = decks, icons=icons, last_jql=jql, username=username)
+
+@app.route("/queue_complete")
+def queue_complete():
+    return render_template('queue_complete.html')
 

@@ -1,19 +1,25 @@
-{% macro topnav(issue_key, fields) %}
-<div class="container-fluid">
+{% macro topnav(issue_key, fields, queue_mode_active) %}
+<div class="container-fluid {% if queue_mode_active %}bg-primary{% endif %}">
     <div class="row justify-content-between align-items-center">
+        {% if not queue_mode_active %}
         <div class="col-auto">
             <div onclick="history.back()" class="d-inline-block">
                 <i class="fa-solid fa-arrow-left"></i>
                 <p class="text-muted d-inline-block ml-1">Back</p>
             </div>
         </div>
-        <div class="col-auto">
-            <span class="badge bg-light text-dark">{{fields.Status.name}}</span>
+        {% endif %}
+        <div class="col-auto" style="width: 100px">
+            <p class="badge bg-light text-muted">{{fields.Status.name}}</p>
         </div>
         <div class="col-auto">
             <p class="badge bg-light text-muted">{{issue_key}}</p>
         </div>
-        
+        {% if queue_mode_active %}
+        <div class="col-auto" onclick="location.href='/queue'">
+            <p class="text-light d-inline-block ml-1">Next ></p>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endmacro %}
@@ -146,26 +152,6 @@
     </script>
 {% endmacro %}
 
-
-{% macro participant_list(participants) %}
-<p>Participant Macro, Under dev</p>
-<br>
-    {% for participant in participants %}
-    
-    <div class="card w-50" style="margin-right: 20px;">
-    <div class="d-flex align-items-center" style="padding:10px">
-        <img class="rounded-circle"  src='{{ participant.avatarUrls['24x24'] }}'>
-        <h6 style="margin-left:10px;">{{ participant.displayName }} </h6>
-    </div>
-    </div>
-    {% endfor %}
-
-<br>
-<br>
-<br>
-<p>END Participant Macro</p>
-{% endmacro %}
-
 {% macro sidescroller(name, jql, tickets, color, icon) %}
 
 <div>
@@ -182,7 +168,8 @@
             <!-- social media page icons -->
             {% for ticket in tickets %}
             <div class="ticket-card {{ color }} shadow"      
-            onclick="location.href='/search/{{ ticket.key }}';">
+            onclick="location.href='/search/{{ ticket.key }}';"
+            data-key="{{ ticket.key }}">
                 {% if ticket.fields.customfield_108529.value == 'Adiyogi' %}
                     <i class="adiyogi bottom-right-badge"></i>
                 {% elif ticket.fields.customfield_108529.value == 'Linga Bhairavi' %}
@@ -204,7 +191,11 @@
                         {{ ticket.fields.summary | truncate(60) }}
                     </h6>
                 </div>
-                
+                <!-- The javascript and form for this is in dashboard.html -->
+                <div class="select-ticket top-right-badge" style="display: none;">
+                    <input class="select-checkbox" name="{{ ticket.key }}" type="checkbox" style="height:20px; width:20px;">
+                </div>
+                    
             </div>
             {% endfor %}
         </div>
@@ -212,6 +203,8 @@
         </div>
     {% endif %}
 </div>
+
+
 
 <style>
 /* colors are taken from bootstrap v 5.3 */
@@ -300,31 +293,19 @@
   
 }
 
-.ticket-card.green {
+.ticket-card-selected {
+/* Used By JS for selected state */
   flex: 0 0 auto;
   width: 200px;
   height: 220px;
   margin-right: 10px;
-  background-color: white;
+  margin-left: 10px;
+  background-color: #1255ff;
+  border: 0 solid #cccccc;
   border-radius: 5px;
   position: relative; /* Ensure badge is positioned relative to the card */
   cursor: pointer;
   transition: 0.5s;
-  
-  
-}
-
-.ticket-card.red {
-  flex: 0 0 auto;
-  width: 200px;
-  height: 220px;
-  margin-right: 10px;
-  background-color: white;
-  border-radius: 5px;
-  position: relative; /* Ensure badge is positioned relative to the card */
-  cursor: pointer;
-  transition: 0.5s;
-  
   
 }
 
@@ -383,7 +364,7 @@
 
 {% macro workflow(transitions) %}
 
-<div class='verticalscroll'>
+<div class='workflow-scroll'>
     <div class="btn-group" role="group" aria-label="Basic example">
         {% for key, value in transitions.items() %}
             <a href="/transition/{{ value }}"><button type="button" class="btn" style="margin:10px; border-radius: 20px; font-weight: 600; color: white; background-color: #6610f2;">{{ value }}</button></a>
@@ -394,7 +375,7 @@
 
 <style>
 
-.verticalscroll {
+.workflow-scroll {
     overflow-x: auto;
     white-space: nowrap;
     scrollbar-width: none;
@@ -405,7 +386,7 @@
 
 
 
-.verticalscroll::-webkit-scrollbar {
+.workflow-scroll::-webkit-scrollbar {
     display: none;/* Hide scrollbar for WebKit browsers (e.g. Chrome, Safari) */
 }
 </style>
@@ -413,103 +394,38 @@
 
 
 {% macro fieldlist(fields) %}
-<div class='verticalscroll'>
-    <div class="">
-    {% for key, value in fields.items() %}
-    <div class="card field-card bg-light shadow" onclick="showExpandedCard(this)">
-        <h6>{{ key }}</h6>
-        <p class="normal-text">{{ value }}</p>
-        <p class="expanded-value" style="display: none;">{{ value }}</p>
-    </div>
-    {% endfor %}  
-</div>
-</div>
 
-<div id="expanded-card" class="expanded-card-container" style="display: none;">
-    <div class="expanded-card shadow">
-        <span id="expanded-card-close" class="close-btn" onclick="closeExpandedCard()">×</span>
-        <h6 id="expanded-card-title"></h6>
-        <p id="expanded-card-content"></p>
-    </div>
+
+
+{% for key, value in fields.items() %}
+<div class="field-card">
+        <p id="key-{{ key }}">{{ key }}</p>
+        <p id="value-{{ key }}">{{ value }}</p>
 </div>
+{% endfor %} 
 
 <style>
-.verticalscroll {
-    overflow-y: auto;
-    height: 500px
-}
-
 .field-card {
-    padding: 20px;
-    border-radius: 20px;
-    max-width: 50%; /* Expand the card to fill the grid cell */
-    max-height: 300px;
-    cursor: pointer;
-    position: relative;
-    box-sizing: border-box;
-    overflow: hidden;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px 0;
+  height:auto;
+  width: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.field-card p {
-    overflow: hidden;
-    white-space: normal;
-    text-overflow: ellipsis;
-}
-
-.expanded-card-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    width: 100%;
-    height: 100%;
-    z-index: 999;
-}
-
-.expanded-card {
-    justify-content: center;
-    margin-top: 100px;
-    background-color: #fff;
-    border-radius: 20px;
-    padding: 30px;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-}
-
-.close-btn {
-    position: absolute;
-    top: 100px;
-    right: 20px;
-    font-size: 24px;
-    cursor: pointer;
-}
 </style>
 
+
 <script>
-function showExpandedCard(card) {
-    var title = card.querySelector('h6').textContent;
-    var content = card.querySelector('.expanded-value').textContent;
-    document.getElementById('expanded-card-title').textContent = title;
-    document.getElementById('expanded-card-content').textContent = content;
-    document.getElementById('expanded-card').style.display = 'block';
-}
 
-function closeExpandedCard() {
-    document.getElementById('expanded-card').style.display = 'none';
-}
+const fields = Array.from(document.getElementsByClassName('field'))
 
-// Truncate text for normal state
-document.addEventListener('DOMContentLoaded', function() {
-    var normalTextElements = document.querySelectorAll('.normal-text');
-    normalTextElements.forEach(function(element) {
-        var text = element.textContent;
-        if (text.length > 120) {
-            element.textContent = text.substring(0, 120) + '...';
-        }
-    });
-});
+fields.forEach(Element =>
+element.innerHTML=''
+)
 </script>
 
 {% endmacro %}

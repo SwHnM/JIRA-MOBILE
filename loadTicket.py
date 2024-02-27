@@ -27,7 +27,39 @@ class Ticket:
             field_name = field_map.get(field_id, field_id)
             field_val = issue.raw['fields'][field_id]
             if field_val is not None and field_val != "Unresolved" and field_val != 0.0 and field_val != []:
+                if isinstance(field_val, dict):
+                    for key, value in field_val.items():
+                        if key == 'name':
+                            field_val = value
+                        
+                        elif key == 'value':
+
+                            field_val = value
+                elif isinstance(field_val, list):
+                    for item in field_val:
+                        try:
+                            for key, value in item.items():
+                                if key == 'name':
+                                    field_val = value
+                                
+                                elif key == 'value':
+                                    field_val = value
+                        except Exception as e:
+                            print(e)
+                            print('oopsie')
+               
                 fields[field_name] = field_val
+
+        # for field in fields:
+        #     print(type(fields))
+        #     print(field)
+        #     if field['name']:
+        #         new_value = field['name']
+        #         fields.update({field: new_value})
+
+        #     elif field['value']:
+        #         new_value = field['value']
+        #         fields.update({field: new_value})
 
         # Transitions and workflow
         transitions = jira.get_transitions(issue_key)

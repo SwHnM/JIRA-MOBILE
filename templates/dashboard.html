@@ -28,15 +28,15 @@
 
 <div id="contextual-menu">
     <div class="buttonGrouping">
-        <button class="menu-button" id="menu-button-1" onclick="toggleSelectMode()" style="background-color: #0b5ed7;"><i class="fa-solid fa-object-ungroup"></i></button>
-        <label for="menu-button-1" class="buttonDescription text-muted">Select</label>
+        <button class="menu-button" id="select" onclick="selectTickets()" style="background-color: #0b5ed7;"><i class="fa-solid fa-object-ungroup"></i></button>
+        <label for="select" class="buttonDescription text-muted">Select</label>
     </div>
     <div class="buttonGrouping">
         <button class="menu-button" id="menu-button-2" style="background-color: #ffc107;"><i class="fa-solid fa-user"></i></button>
         <label for="menu-button-2" class="buttonDescription text-muted">Assign</label>
     </div>
     <div class="buttonGrouping">
-        <button class="menu-button" id="menu-button-3" style="background-color: #6f42c1;"><i class="fa-solid fa-layer-group"></i></button>
+        <button class="menu-button" type="submit" form="selected-tickets" id="menu-button-3" style="background-color: #6f42c1;"><i class="fa-solid fa-layer-group"></i></button>
         <label for="menu-button-3" class="buttonDescription text-muted">Queue</label>
     </div>
     <div class="buttonGrouping">
@@ -48,17 +48,19 @@
 </div>
 
     <div class="decks">
-
+<form id="selected-tickets" action="/queue" method="POST">
     {% for deck in decks %}
             {% from "/Components/macros.html" import sidescroller %}
             {{ sidescroller(deck['name'], deck['jql'], deck['tickets'], deck['color'], deck['icon']) }}
     {% endfor %}
+    <button type="submit">Submit</button>
+</form>
 <br>
     </div>
 
 
     <div class="card bg-light" style="border-radius: 20px; border:0;">
-    
+        
         <form id="new-deck-form" class="form-group" action="/newdeck" method="POST" style="margin-top: 10px; padding-bottom: 60px;">
             <h2 class="text-muted" style="margin-left: 20px;">Add Deck</h2>
             <div style="padding: 20px">
@@ -124,14 +126,7 @@
         }
     }
 
-    // Buttons in menu
-    let selectMode = false;
-    let selectedTickets = [];
 
-    function toggleSelectMode() {
-        selectMode = !selectMode;
-
-    }
 
 // Add deck
 
@@ -165,17 +160,43 @@ document.getElementById('new-deck-form').addEventListener('submit', function(eve
     }
 });
 
-// For changing the color of the icon bg based on color selector
-$(document).ready(function() {
-    console.log("Document ready function called.");
-    $('input[name="deck-color"]').change(function() {
-      console.log("Color changed");
-      var selectedColor = $('input[name="deck-color"]:checked').val();
-      console.log("Selected color: " + selectedColor);
-      $('.icon-label').css('background-color', selectedColor + '!important');
-    });
-  });
+// So this script below is kinda complicated... was facing some
+// difficulty with using template data from flask.
+// The function for opening or checking a ticket needs
+// the ticket id as an argument
+let allowSelect = false
 
+function selectTickets() {
+
+    const ticket_card = Array.from(document.getElementsByClassName("ticket-card"))
+    const ticket_checkboxes = Array.from(document.getElementsByClassName("select-ticket"))
+    const button = document.getElementById('select')
+
+    if (allowSelect === false){
+        ticket_card.forEach(element => {
+            element.setAttribute('onclick', '')
+            
+            element.classList = "ticket-card shadow"
+        });
+        ticket_checkboxes.forEach(element => {
+            element.style.display = 'block'
+        });
+        allowSelect = true
+
+    }
+    else {
+        ticket_card.forEach(element => {
+            ticketKey = element.getAttribute('data-key')
+            element.setAttribute('onclick', `location.href='/search/${ticketKey}';`)
+        });
+        ticket_checkboxes.forEach(element => {
+            element.style.display = 'none'
+        });
+        document.getElementById('selected-tickets').reset();
+        allowSelect = false
+
+    }
+}
 
 </script>
 
@@ -200,7 +221,27 @@ $(document).ready(function() {
     width: 70px;
     border-width: 0;
     border-radius: 50%;
+    transition: transform 0.3s ease;
+}
 
+.menu-button-pressed {
+    color: black;
+    border: 3px;
+    font-size: 20px;
+    height: 70px;
+    width: 70px;
+    border-width: 0;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.menu-button:hover {
+    transform: scale(1.1);
+    border: 20px;
+}
+
+.menu-button:active {
+    transform: scale(0.9);
 }
 
 
