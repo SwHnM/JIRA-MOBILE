@@ -2,8 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, f
 import os
 from jiraService import JIRAService
 import datetime
-from dateParser import parse_date
-from commentParser import extract_attachment_references, clean_comment
+from dateParser import parse_date, parse_due_date
 from loadTicket import Ticket
 from directApiRequests import raw_search
 import json
@@ -364,13 +363,73 @@ def dashboard():
 ### decks is refering to the horizontal display of cards.
         
         social_media_account = "customfield_108529"
+        all_languages = "customfield_12301"
         
-        fields = ["summary", "description", "assignee", "status", "duedate", social_media_account]
+        fields = ["summary", "assignee", "status", "duedate", "reporter", all_languages, social_media_account]
 
         for deck in decks:
             jql = deck['jql']
             tickets = raw_search(jql, fields, username, password)
             deck['tickets'] = tickets
+            
+            for ticket in tickets:
+                try:
+                    due_date = ticket['fields']['duedate']
+                    parsed_due_date = parse_due_date(due_date)
+                except:
+                    parsed_due_date = 'No Due Date'
+                
+                ticket['fields']['duedate'] = parsed_due_date
+
+
+#### Langs
+                language_list = []
+
+                if type(ticket['fields']["customfield_12301"]) == list:
+                    if all(len(language_dict) >= 2 for language_dict in ticket['fields']["customfield_12301"]):
+                        
+                        for language_dict in ticket['fields']["customfield_12301"]:
+                            language = language_dict['value']
+                            language_list.append(language)
+                    else:
+                        language_list = ticket['fields']["customfield_12301"]['value']
+                        
+                ticket['fields']['languages'] = language_list
+        
+
+                print(language_list)
+
+###### This if to replace ticket platform with appropriate icon. It returns a filepath.
+                
+                try:
+                    sm_act = ticket['fields']['customfield_108529']['value']
+
+                    if sm_act == 'Adiyogi':
+                        icon = '/static/assets/icons/Adiyogi.svg'
+                    elif sm_act == 'Conscious Planet':
+                        icon = '/static/assets/icons/earth.png'
+                    elif sm_act == 'Linga Bhairavi':
+                        icon = '/static/assets/icons/Devi.svg'
+                    elif sm_act == 'Isha Foundation':
+                        icon = '/static/assets/icons/ishalogo.png'
+                    elif sm_act == 'Sadhguru':
+                        icon = '/static/assets/icons/sadhguru.svg'
+
+                    ticket['platform_icon'] = icon
+                        
+                except:
+                    print('no icon')
+
+
+                
+
+
+
+            
+            
+                
+
+            
 
         icons_file = open("static/icons.txt", "r") 
         data = icons_file.read() 
@@ -380,7 +439,7 @@ def dashboard():
 
     except Exception as e:
         print(e)
-        # traceback.print_exc()
+        traceback.print_exc()
         return redirect('/login')
         
     return render_template('dashboard.html', decks = decks, icons=icons, last_jql=jql, username=username)

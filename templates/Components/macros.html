@@ -167,25 +167,14 @@
         <div class="ticket-container">
             <!-- social media page icons -->
             {% for ticket in tickets %}
-            <div class="ticket-card {{ color }} shadow"      
+            <div id="ticket-{{ ticket.key }}"  class="ticket-card shadow"      
             onclick="location.href='/search/{{ ticket.key }}';"
             data-key="{{ ticket.key }}">
-                {% if ticket.fields.customfield_108529.value == 'Adiyogi' %}
-                    <i class="adiyogi bottom-right-badge"></i>
-                {% elif ticket.fields.customfield_108529.value == 'Linga Bhairavi' %}
-                    <i class="devi bottom-right-badge"></i>
-                {% elif ticket.fields.customfield_108529.value == 'Conscious Planet' %}
-                    <i class="fa-solid fa-earth-africa bottom-right-badge" style="font-size: 25px;"></i>
-                {% elif ticket.fields.customfield_108529.value == 'Isha Foundation' %}
-                    <img class="bottom-right-badge" height="30" src="/static/assets/icons/ishalogo.png">
-                {% elif ticket.fields.customfield_108529.value == 'Sadhguru' %}
-                    <span class="badge bg-dark bottom-right-badge">SG</span>
-                {% else %}
-                    <span class="badge bottom-right-badge bg-success">{{ ticket.fields.customfield_108529.value }}</span>
-                {% endif %}
+            <div class="card-inner-info">
+                
             <!------------------------------->
-                <span class="badge top-badge bg-light text-dark ">{{ ticket.key }}</span>
-                <span class="badge bottom-badge bg-light text-dark ">{{ ticket.fields.duedate }}</span>
+                <span class="top-badge {{ ticket.fields.duedate }}">{{ ticket.fields.duedate }}</span>
+                <span class="badge bottom-right-badge bg-light text-dark ">{{ ticket.key }}</span>
                 <div class="ticket-summary">
                     <h6>
                         {{ ticket.fields.summary | truncate(60) }}
@@ -195,7 +184,20 @@
                 <div class="select-ticket top-right-badge" style="display: none;">
                     <input class="select-checkbox" name="{{ ticket.key }}" type="checkbox" style="height:20px; width:20px;">
                 </div>
-                    
+            </div>
+                {% if ticket.languages | length >= 1 %}
+                {% for lang in ticket.languages %}
+                    <p>{{ lang }}</p>
+                {% endfor %}
+
+                    <i class="fa-solid fa-language" style="font-size: 40px;"></i>
+
+                {% endif %}
+                <img class="sm_icon {{ ticket.fields.duedate }}" src="{{ ticket.platform_icon }}">
+                
+                {% if not ticket.platform_icon %}
+                    <span class="badge bottom-right-badge bg-success">{{ ticket.fields.customfield_108529.value }}</span>
+                {% endif %}    
             </div>
             {% endfor %}
         </div>
@@ -239,30 +241,44 @@
     background-color: #d39e00;
 }
 
+.sm_icon {
+    height: 100px;
+    border-radius: 0 0 0 20px;
+    position:absolute;
+    left: 0;
+    bottom:0;
+    filter: invert(22%) sepia(82%) saturate(2436%) hue-rotate(208deg) brightness(99%) contrast(95%);
 
-/* for social media page icons */
-.devi {
-    background: url('/static/assets/icons/Devi.svg');
-    height: 25px;
-    width: 25px;
-    display: block;
-    /* Other styles here */
-}
-.adiyogi {
-    background: url('/static/assets/icons/Adiyogi.svg');
-    height: 25px;
-    width: 25px;
-    display: block;
-    /* Other styles here */
 }
 
+.sm_icon.Super {
+    filter: invert(9%) sepia(93%) saturate(4146%) hue-rotate(357deg) brightness(93%) contrast(112%);
 
+}
 
+.sm_icon.Overdue {
+    filter: invert(9%) sepia(93%) saturate(4146%) hue-rotate(357deg) brightness(93%) contrast(112%);
 
+}
+
+.sm_icon.Today {
+    filter: invert(68%) sepia(22%) saturate(5974%) hue-rotate(2deg) brightness(105%) contrast(108%);
+
+}
+
+.sm_icon.Tomorrow {
+    filter: invert(68%) sepia(22%) saturate(5974%) hue-rotate(2deg) brightness(105%) contrast(108%);
+
+}
+
+.sm_icon.Days {
+    filter: invert(26%) sepia(73%) saturate(1669%) hue-rotate(94deg) brightness(100%) contrast(103%);
+
+}
 
 .ticket-section {
   width: 100%;
-  height: 250px;
+  height: 300px;
   overflow-x: auto;
   scrollbar-width: none;
 
@@ -281,20 +297,24 @@
 .ticket-card {
   flex: 0 0 auto;
   width: 200px;
-  height: 220px;
+  height: 260px;
   margin-right: 10px;
   margin-left: 10px;
   background-color: #ffffff;
   border: 0 solid #cccccc;
-  border-radius: 5px;
+  border-radius: 20px;
   position: relative; /* Ensure badge is positioned relative to the card */
   cursor: pointer;
   transition: 0.5s;
   
 }
 
+.card-inner-info {
+    color: black;
+}
+
 .ticket-card-selected {
-/* Used By JS for selected state */
+/* Used By JS for selected state in dasboard.html */
   flex: 0 0 auto;
   width: 200px;
   height: 220px;
@@ -309,29 +329,48 @@
   
 }
 
-.ticket-card.green:hover {
-  background-color:#d1e7dd;
-  margin: 5px;
-  transition: 0.5s;
-  
-}
-
-.ticket-card.red:hover {
-  background-color:#e7d1d1;
-  margin: 5px;
-  transition: 0.5s;
-  
-}
-
-.ticket-card:last-child {
-  margin-right: 0px;
-}
-
 .top-badge {
   position: absolute;
-  top: 20px;
-  left: 10px;
+  background-color: #0b5ed7;
+  top: 0;
+  left:0;
+  border-radius: 20px 20px 0 0;
+  height: 30px;
+  width: 200px;
+  padding:10px;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  line-height: 15px;
+
 }
+
+    .top-badge.Super {
+    background-color: darkred;
+
+    }
+
+    .top-badge.Overdue {
+    background-color: darkred;
+    }
+
+
+    .top-badge.Today {
+    background-color: orange;
+
+    }
+
+    .top-badge.Tomorrow {
+    background-color: orange;
+
+    }
+
+    .top-badge.Days {
+    background-color: green;
+
+    }
+
+
 .top-right-badge {
   position: absolute;
   top: 20px;
@@ -351,7 +390,7 @@
 }
 
 .ticket-summary {
-  margin-top: 50px;
+  margin-top: 30px;
   padding: 10px;
   white-space: normal;
   word-break: break-all;

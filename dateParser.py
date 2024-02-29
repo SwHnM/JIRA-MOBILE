@@ -40,3 +40,32 @@ def parse_date(date_string):
     # Otherwise
     else:
         return ist_date_object.strftime('%d/%m/%Y')
+    
+    
+
+def parse_due_date(date_str):
+    # Parse the input date string
+    input_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    
+    # Get the current date
+    today = datetime.now().date()
+    
+    # Calculate the difference in days
+    delta = input_date - today
+    delta_days = delta.days
+    
+    # Define the messages based on the difference in days
+    if delta_days < -3:
+        return "Super Overdue"
+    elif delta_days < 0:
+        return "Overdue"
+    elif delta_days == 0:
+        return "Today"
+    elif delta_days == 1:
+        return "Tomorrow"
+    elif delta_days < 7:
+        return f"{delta_days} Days"
+    elif delta_days == 7:
+        return "1 Week"
+    else:
+        return input_date.strftime('%b %d %Y')
