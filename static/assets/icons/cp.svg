@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <style>
+      .cls-1 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-2 {
+        font-size: 85px;
+      }
+
+      .cls-3 {
+        stroke-width: 0px;
+      }
+
+      .cls-4 {
+        font-family: Anton-Regular, Anton;
+      }
+
+      .cls-5 {
+        font-size: 97px;
+      }
+    </style>
+  </defs>
+  <text class="cls-4" transform="translate(122.78 201)"><tspan class="cls-2"><tspan x="0" y="0">S</tspan><tspan class="cls-1" x="39.22" y="0">A</tspan><tspan x="78.65" y="0">VE</tspan></tspan><tspan class="cls-5"><tspan x="0" y="89">SOIL</tspan></tspan></text>
+  <path class="cls-3" d="m199.5,93.5c30.98,0,60.11,12.07,82.02,33.98,21.91,21.91,33.98,51.04,33.98,82.02s-12.07,60.11-33.98,82.02c-21.91,21.91-51.04,33.98-82.02,33.98s-60.11-12.07-82.02-33.98c-21.91-21.91-33.98-51.04-33.98-82.02s12.07-60.11,33.98-82.02c21.91-21.91,51.04-33.98,82.02-33.98m0-13c-71.24,0-129,57.76-129,129s57.76,129,129,129,129-57.76,129-129-57.76-129-129-129h0Z"/>
+</svg>

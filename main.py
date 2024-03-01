@@ -383,21 +383,12 @@ def dashboard():
 
 
 #### Langs
-                language_list = []
 
                 if type(ticket['fields']["customfield_12301"]) == list:
-                    if all(len(language_dict) >= 2 for language_dict in ticket['fields']["customfield_12301"]):
-                        
-                        for language_dict in ticket['fields']["customfield_12301"]:
-                            language = language_dict['value']
-                            language_list.append(language)
-                    else:
-                        language_list = ticket['fields']["customfield_12301"]['value']
-                        
-                ticket['fields']['languages'] = language_list
-        
-
-                print(language_list)
+                    ticket['language_count'] = len(ticket['fields']["customfield_12301"])
+                else:
+                    ticket['language_count'] = 0
+                    
 
 ###### This if to replace ticket platform with appropriate icon. It returns a filepath.
                 
@@ -407,13 +398,15 @@ def dashboard():
                     if sm_act == 'Adiyogi':
                         icon = '/static/assets/icons/Adiyogi.svg'
                     elif sm_act == 'Conscious Planet':
-                        icon = '/static/assets/icons/earth.png'
+                        icon = '/static/assets/icons/cp.svg'
                     elif sm_act == 'Linga Bhairavi':
                         icon = '/static/assets/icons/Devi.svg'
                     elif sm_act == 'Isha Foundation':
-                        icon = '/static/assets/icons/ishalogo.png'
+                        icon = '/static/assets/icons/isha.svg'
                     elif sm_act == 'Sadhguru':
                         icon = '/static/assets/icons/sadhguru.svg'
+                    elif sm_act == 'Dhyanalinga':
+                        icon = '/static/assets/icons/dhyanalinga.svg'    
 
                     ticket['platform_icon'] = icon
                         
