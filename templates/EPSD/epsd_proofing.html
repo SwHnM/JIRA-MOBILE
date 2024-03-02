@@ -1,5 +1,8 @@
 {% extends 'layout.html' %}
 {% block content %}
+<!-- This line is here bc for some reason the q mode active variable wasn't being passed. If it's here, it works. -->
+<p style="display: none;">{{ queue_mode_active }}<p>
+    
 <div class="container-fluid no-margin">
     {% from "/Components/macros.html" import topnav %}
         {{ topnav(issue_key, fields, queue_mode_active) }}

@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
+<!-- This line is here bc for some reason the q mode active variable wasn't being passed. If it's here, it works. -->
+<p style="display: none;">{{ queue_mode_active }}<p>
 
 {% from "/Components/macros.html" import topnav %}
 {{ topnav(issue_key, fields, queue_mode_active) }}
@@ -7,8 +9,10 @@
 
 {% from "/Components/macros.html" import summary %}
 {{ summary(fields) }}
-<br>
-        
+
+
+<!-- This div is needed for the javascript in the fields macro to function. -->
+<div id="fields-javascript"></div>     
 
 {% from "/Components/macros.html" import fieldlist %}
 {{ fieldlist(fields) }}

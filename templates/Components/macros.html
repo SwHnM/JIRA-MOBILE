@@ -1,23 +1,30 @@
 {% macro topnav(issue_key, fields, queue_mode_active) %}
 <div class="container-fluid {% if queue_mode_active %}bg-primary{% endif %}">
     <div class="row justify-content-between align-items-center">
-        {% if not queue_mode_active %}
+        {% if queue_mode_active != false %}
+        
+        <div class="col-auto">
+            <p class="badge bg-light text-primary">{{issue_key}}</p>
+        </div>
+        <div class="col-auto">
+            <p class="badge bg-light text-primary">{{fields.Status}}</p>
+        </div>
+        <div class="col-auto" onclick="location.href='/queue'">
+            <p class="text-light d-inline-block ml-1">Next ></p>
+        </div>
+        {% else %}
+        
         <div class="col-auto">
             <div onclick="history.back()" class="d-inline-block">
                 <i class="fa-solid fa-arrow-left"></i>
                 <p class="text-muted d-inline-block ml-1">Back</p>
             </div>
         </div>
-        {% endif %}
         <div class="col-auto" style="width: 100px">
-            <p class="badge bg-light text-muted">{{fields.Status.name}}</p>
+            <p class="badge bg-light text-muted">{{fields.Status}}</p>
         </div>
         <div class="col-auto">
             <p class="badge bg-light text-muted">{{issue_key}}</p>
-        </div>
-        {% if queue_mode_active %}
-        <div class="col-auto" onclick="location.href='/queue'">
-            <p class="text-light d-inline-block ml-1">Next ></p>
         </div>
         {% endif %}
     </div>
@@ -96,6 +103,7 @@
         height: 100%;
         transition: ease 0.3s;
         padding-right: 50px;
+        border: 1px solid #ccc;
     }
 </style>
 {% endmacro %}
@@ -103,20 +111,17 @@
 
 {% macro summary(fields) %}
 <div class="card" style="margin:10px; border: none">
-    <div style="max-width: 85%;">
-    <h2 class="mb-0">{{ fields.Summary }}</h2>
+    <div style="max-width: 85%; margin-bottom: 0;">
+    <h2 style="margin-bottom: 0;">{{ fields.Summary }}</h2>
     </div>
-    <div>
     <button class="btn btn-light rounded-circle position-absolute top-0 end-0" id="copyButton" onclick="copyText()" style="margin-left: 10px;">
         <i class="fas fa-copy" style="color: grey;"></i>
     </button>
-        <div class="float-end" style="margin-top: 20px;">
         {% if fields['Social Media Account'] %}
+        <div class="float-end" style="margin-top: 20px;">
                 <span class="badge bg-primary">{{fields['Social Media Account'].value}}</span>
         </div>
     {% endif %}
-
-    </div>
 </div>
 <script>
 
@@ -181,7 +186,7 @@
                     <div class="float-end">
                         <div id="reporter-{{ticket.fields.reporter.name}}" class="reporter {{ ticket.fields.duedate }}">
     <!-- reporter -->
-                            <h3 style="line-height: 40px; color: white">{{ ticket.fields.reporter.displayName[0] }}{% if ticket.fields.reporter.displayName.split()[1] %}{{ ticket.fields.reporter.displayName.split()[1][0] }}{% endif %} </h3>
+                            <h5 style="line-height: 30px; color: white">{{ ticket.fields.reporter.displayName[0] }}{% if ticket.fields.reporter.displayName.split()[1] %}{{ ticket.fields.reporter.displayName.split()[1][0] }}{% endif %} </h5>
                             <label title="{{ ticket.fields.reporter.displayName }}"></label>
                         </div>
                         <label title="{{ ticket.fields.reporter.displayName }}"></label>
@@ -217,16 +222,16 @@
 
 .reporter{
     text-align: center;
-    background-color: #0b5ed7;
-    width:40px;
-    height: 40px;
+    background-color: gray;
+    width:30px;
+    height: 30px;
     border-radius: 50%;   
     position: absolute;
     bottom: 40px;
     right: 10px;
 }
 
-    .reporter.Super {
+    /* .reporter.Super {
     background-color: darkred;
 
     }
@@ -249,21 +254,21 @@
     .reporter.Days {
     background-color: green;
 
-    }
+    } */
 
 
 .language{
-    font-size: 40px;
+    font-size: 30px;
     position: absolute;
-    bottom: 90px;
+    bottom: 80px;
     right: 10px;
-   color: #0b5ed7;
+   color: gray;
 
 }
 
 
 
-.language.Super {
+/* .language.Super {
 color: darkred;
 
 }
@@ -286,7 +291,7 @@ color: orange;
 .language.Days {
 color: green;
 
-}
+} */
 
 
 
@@ -502,7 +507,6 @@ color: green;
     </div>
 </div>
 
-
 <style>
 
 .workflow-scroll {
@@ -528,9 +532,18 @@ color: green;
 
 
 {% for key, value in fields.items() %}
-<div class="field-card">
-        <p id="key-{{ key }}">{{ key }}</p>
-        <p id="value-{{ key }}">{{ value }}</p>
+<div onclick="expandCard('{{ key }}')" id="key-{{ key }}" class="field-card shadow">
+        <h5>{{ key }}</h5>
+        <p>{{ value | truncate(200) }}</p>
+</div>
+{% endfor %}
+
+{% for key, value in fields.items() %}
+<div onclick="expandCard('{{ key }}')" id="expanded-{{ key }}" class="card shadow" style=" border: none; background-color: none; display: none; padding: 20px; transition: ease 0.3s;">
+    <div class="card shadow" style="border: 1px; border-radius: 20px; padding: 20px;">
+        <h5>{{ key }}</h5>
+        <p>{{ value }}</p>
+    </div>
 </div>
 {% endfor %} 
 
@@ -539,11 +552,36 @@ color: green;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
-  margin: 10px 0;
+  margin: 10px;
+  border-radius: 20px;
   height:auto;
-  width: auto;
-  display: flex;
+  width: 200px;
   flex-direction: column;
+  word-break: break-word;
+}
+
+.extra-wrapper-div{
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    padding-bottom: 20px;
+}
+
+.extra-wrapper-div::-webkit-scrollbar {
+    display: none;/* Hide scrollbar for WebKit browsers (e.g. Chrome, Safari) */
+}
+
+.parent-div {
+    display:inline-flex;
+    
+
+}
+
+.container-div {
+    white-space: normal;
+    display: block;
+    margin:auto;
+    
 }
 
 </style>
@@ -551,11 +589,105 @@ color: green;
 
 <script>
 
-const fields = Array.from(document.getElementsByClassName('field'))
+let card_expanded = false
 
-fields.forEach(Element =>
-element.innerHTML=''
-)
+function expandCard(key) {
+    if (card_expanded) {
+        card = document.getElementById(`expanded-${key}`)
+        card.style.display = 'none'
+
+        card_expanded = false
+    }
+    else{
+        card = document.getElementById(`expanded-${key}`)
+        card.style.display = 'block'
+
+        card_expanded = true
+    }
+
+}
+
+
+
+
+const fields = Array.from(document.getElementsByClassName('field-card'));
+const heightsDictionary = {};
+
+fields.forEach(element => {
+    const id = element.id;
+    const height = element.offsetHeight;
+    heightsDictionary[id] = height;
+});
+
+console.log(heightsDictionary);
+
+let maxHeight = -Infinity;
+let maxId = '';
+
+for (const id in heightsDictionary) {
+    if (heightsDictionary[id] > maxHeight) {
+        maxHeight = heightsDictionary[id];
+        maxId = id;
+    }
+}
+
+console.log(`The element with ID "${maxId}" has the largest height of ${maxHeight}px.`);
+
+const setsOfIds = [];
+let currentSet = new Set();
+let totalHeight = 0;
+
+for (const id in heightsDictionary) {
+    if (totalHeight + heightsDictionary[id] <= maxHeight) {
+        currentSet.add(id);
+        totalHeight += heightsDictionary[id];
+    } else {
+        setsOfIds.push(currentSet);
+        currentSet = new Set();
+        currentSet.add(id);
+        totalHeight = heightsDictionary[id];
+    }
+}
+
+// Add the last set if it's not empty
+if (currentSet.size > 0) {
+    setsOfIds.push(currentSet);
+}
+
+console.log("Sets of IDs where the total height is <= maxHeight:");
+console.log(setsOfIds);
+
+// Create a parent div to contain all the generated divs
+const parentDiv = document.createElement('div');
+parentDiv.classList.add('parent-div');
+
+// Create divs for each set and move elements into them
+setsOfIds.forEach((idSet, index) => {
+    const containerDiv = document.createElement('div');
+    containerDiv.classList.add('container-div');
+    
+    idSet.forEach(id => {
+        const element = document.getElementById(id);
+        containerDiv.appendChild(element);
+    });
+
+    parentDiv.appendChild(containerDiv);
+});
+
+// Create an extra wrapper div
+const extraWrapperDiv = document.createElement('div');
+extraWrapperDiv.classList.add('extra-wrapper-div');
+extraWrapperDiv.appendChild(parentDiv);
+
+// Create an extra-extra wrapper div
+const finalWrapperDiv = document.createElement('div');
+finalWrapperDiv.classList.add('extra-wrapper-div');
+finalWrapperDiv.appendChild(extraWrapperDiv);
+
+document.getElementById('fields-javascript').innerHTML = finalWrapperDiv.innerHTML
+
+
+
 </script>
 
 {% endmacro %}

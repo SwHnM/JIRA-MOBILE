@@ -44,6 +44,9 @@ class JIRAService:
     def get_comments(self, issue_key):
         issue = self.get_issue(issue_key)
         return issue.fields.comment.comments
+    
+    def assign(self, issue, assignee):
+        self.jira.assign_issue(issue, assignee)
 
     def makeComment(self, issue, comment):
         self.jira.add_comment(issue, comment)

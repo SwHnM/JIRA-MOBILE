@@ -11,11 +11,8 @@
         <form class="form-group">
             <div class="input-group shadow" style="border-radius: 30px;">
                 <input class='form-control' type="text" placeholder="Search" aria-label="Recipient's username" aria-describedby="button-addon2" style="height:50px; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-width:0px; border-right-width:0;" id="searchInput">
-                <button class="btn text-muted bg-white" type="button" id="button-addon2" style="font-size: 20px; border-width: 0px; border-left-width:0; border-right-width:0; border-color: #ced4da;" onclick="searchRedirect()">
+                <button class="btn text-muted bg-white" type="button" id="button-addon2" style="font-size: 20px; border-width: 0px; border-left-width:0; border-right-width:0; border-bottom-right-radius: 30px;border-top-right-radius: 30px; border-color: #ced4da;" onclick="searchRedirect()">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-                <button class="btn text-muted bg-white" type="button" id="button-addon1" onclick="location.href='/search';" style="font-size: 20px; border-width: 0px; border-left-width:0; border-color: #ced4da; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
-                    <i class="fa-solid fa-gear" style="margin-right:10px"></i>
                 </button>
             </div>
         </form>
@@ -24,27 +21,26 @@
 </div>
 
 
-<div class="container-fluid no-margin" id="mainContent">
+<div class="container-fluid no-margin bg-light" id="mainContent">
 
 <div id="contextual-menu">
+    <div class="buttonGrouping">
+        <button class="menu-button" id="advanced" onclick="location.href='/search'" style="background-color: #157347;"><i class="fa-solid fa-code"></i></i></button>
+        <label for="advanced" class="buttonDescription text-muted">JQL</label>
+    </div>    
     <div class="buttonGrouping">
         <button class="menu-button" id="select" onclick="selectTickets()" style="background-color: #0b5ed7;"><i class="fa-solid fa-object-ungroup"></i></button>
         <label for="select" class="buttonDescription text-muted">Select</label>
     </div>
     <div class="buttonGrouping">
-        <button class="menu-button" id="menu-button-2" style="background-color: #ffc107;"><i class="fa-solid fa-user"></i></button>
-        <label for="menu-button-2" class="buttonDescription text-muted">Assign</label>
+        <button class="menu-button-disabled" id="assign" form="selected-tickets" type="submit" formaction="/assign" style="background-color: #ffc107;"><i class="fa-solid fa-user"></i></button>
+        <label for="assign" class="buttonDescription text-muted">Assign</label>
     </div>
     <div class="buttonGrouping">
-        <button class="menu-button" type="submit" form="selected-tickets" id="menu-button-3" style="background-color: #6f42c1;"><i class="fa-solid fa-layer-group"></i></button>
-        <label for="menu-button-3" class="buttonDescription text-muted">Queue</label>
+        <button class="menu-button-disabled" type="submit" form="selected-tickets" id="queue" style="background-color: #6f42c1;"><i class="fa-solid fa-layer-group"></i></button>
+        <label for="queue" class="buttonDescription text-muted">Queue</label>
     </div>
-    <div class="buttonGrouping">
-        <button class="menu-button" id="menu-button-4" style="background-color:#adb5bd ;"><i class="fa-solid fa-plus"></i></i></button>
-        <label for="menu-button-4" class="buttonDescription text-muted">New</label>
-    </div>    
-        
-        
+    
 </div>
 
     <div class="decks">
@@ -53,12 +49,11 @@
             {% from "/Components/macros.html" import sidescroller %}
             {{ sidescroller(deck['name'], deck['jql'], deck['tickets'], deck['color'], deck['icon']) }}
     {% endfor %}
-    <button type="submit">Submit</button>
 </form>
 <br>
     </div>
 
-
+<!-- New Deck -->
     <div class="card bg-light" style="border-radius: 20px; border:0;">
         
         <form id="new-deck-form" class="form-group" action="/newdeck" method="POST" style="margin-top: 10px; padding-bottom: 60px;">
@@ -166,22 +161,54 @@ document.getElementById('new-deck-form').addEventListener('submit', function(eve
 // the ticket id as an argument
 let allowSelect = false
 
+window.onload= disable();
+
+function disable() {
+    const disabled_buttons = document.getElementsByClassName('menu-button-disabled');
+    const buttonsArray = Array.from(disabled_buttons);
+    buttonsArray.forEach(element => {
+        element.addEventListener("click", preventDefaultAction);
+    });  
+}
+
+function enable() {
+    const enabled_buttons = document.getElementsByClassName('menu-button');
+    const buttonsArray = Array.from(enabled_buttons);
+    buttonsArray.forEach(element => {
+        element.removeEventListener("click", preventDefaultAction);
+    });  
+}
+
+function preventDefaultAction(event) {
+    event.preventDefault();
+}
+
+
 function selectTickets() {
 
     const ticket_card = Array.from(document.getElementsByClassName("ticket-card"))
     const ticket_checkboxes = Array.from(document.getElementsByClassName("select-ticket"))
     const button = document.getElementById('select')
 
+    const queue_button =  document.getElementById('queue')
+    const select_button =  document.getElementById('select')
+    const assign_button =  document.getElementById('assign')
+    const advanced_button =  document.getElementById('advanced')
+
     if (allowSelect === false){
         ticket_card.forEach(element => {
             element.setAttribute('onclick', '')
-            
-            element.classList = "ticket-card shadow"
+            element.classList = "ticket-card"
         });
         ticket_checkboxes.forEach(element => {
             element.style.display = 'block'
         });
         allowSelect = true
+
+        select_button.style.backgroundColor = 'navy'
+        queue_button.classList = 'menu-button'
+        assign_button.classList = 'menu-button'
+        advanced_button.classList = 'menu-button-disabled'
 
     }
     else {
@@ -195,8 +222,17 @@ function selectTickets() {
         document.getElementById('selected-tickets').reset();
         allowSelect = false
 
+        document.getElementById('select').style.backgroundColor = '#0b5ed7'
+        document.getElementById('queue').classList = 'menu-button-disabled'
+        document.getElementById('assign').classList = 'menu-button-disabled'
+        document.getElementById('advanced').classList = 'menu-button'
+
     }
+enable()
+disable()
 }
+
+
 
 </script>
 
@@ -206,8 +242,8 @@ function selectTickets() {
     }
 
 #contextual-menu {
-    margin-top: 30px;
-    margin-bottom: 20px;
+    padding-top: 30px;
+    margin-bottom: 40px;
     width: 100%;
     height: 100px;
     display: flex;
@@ -216,6 +252,17 @@ function selectTickets() {
 
 .menu-button {
     color: white;
+    font-size: 20px;
+    height: 70px;
+    width: 70px;
+    border-width: 0;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.menu-button-disabled {
+    color: white;
+    background-color: #D3D3D3 !important;
     font-size: 20px;
     height: 70px;
     width: 70px;

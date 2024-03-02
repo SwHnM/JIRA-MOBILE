@@ -411,7 +411,7 @@ def dashboard():
                     ticket['platform_icon'] = icon
                         
                 except:
-                    print('no icon')
+                    whoops = 'whoops'
 
 
                 
@@ -440,4 +440,53 @@ def dashboard():
 @app.route("/queue_complete")
 def queue_complete():
     return render_template('queue_complete.html')
+
+
+@app.route("/assign", methods=('GET', 'POST'))
+def assign():
+    tickets_form = request.form.items()
+    session['to_assign'] = [key for key, _ in tickets_form]
+    ticket_list = session.get('to_assign')
+
+    print(ticket_list)
+
+    return render_template('assign.html', ticket_list=ticket_list)
+
+@app.route("/assign/sumbit", methods=('GET', 'POST'))
+def assign_sumbit():
+    username = session.get('username')
+    password = session.get('password')
+
+    assignee = request.form.get('assignee')
+    ticket_list = session.get('to_assign')
+
+    try:
+        jira = JIRAService(username, password, "https://servicedesk.isha.in")
+
+        for ticket in ticket_list:
+            print(type(ticket))
+            jira.assign(ticket, assignee)
+            print('assigned')
+
+        
+        return redirect('/queue_complete')
+    except Exception as e:
+        print(e)
+        return redirect('/assign')
+    
+    
+
+
+   
+
+
+    
+
+    
+
+    r
+
+
+
+
 

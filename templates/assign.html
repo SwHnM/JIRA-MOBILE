@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+
+
+
+<div class="bg-light" style="border-radius: 0px; border:0; height:100vh;">
+    <div class="container-fluid">
+        <div class="row justify-content-between align-items-center">
+            <div class="col-auto">
+                <div onclick="history.back()" class="d-inline-block">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <p class="text-muted d-inline-block ml-1">Back</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <h1 class="text-muted" style="margin-left: 20px;">Assign</h1>
+    <div class="ticket-badges">
+        {% for ticket in ticket_list %}
+            <span class="badge bg-primary">{{ ticket }}</span>
+        {% endfor %}
+    </div>
+ 
+    <form id="assign-form" class="form-group" action="/assign/sumbit" method="POST" style="padding-bottom: 60px;">
+        <div style="padding: 20px">
+            <span id="error" class="error"></span><br>
+            <br><input id="assignee" name="assignee" class="form-control" style="border-radius: 30px; height:50px;" placeholder="john.smith">
+            <button class="btn btn-primary float-end" style=" margin-top:20px; border-radius: 20px;">Assign</button>
+        </div>
+    </form>
+
+</div>
+    <style>
+        .ticket-badges {
+    white-space: nowrap; /* Prevent wrapping */
+    padding: 20px;
+    }
+
+    .ticket-badges .badge {
+        display: inline-block; /* Display badges inline */
+        margin-right: 5px; /* Add some space between badges */
+        margin-bottom: 5px; /* Add some space between lines */
+    }
+    </style>
+{% endblock %}

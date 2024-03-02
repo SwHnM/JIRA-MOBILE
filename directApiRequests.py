@@ -48,3 +48,25 @@ def raw_search(jql, fields, username, password):
     tickets = output['issues']
 
     return tickets
+
+def get_all_users(username, password):
+
+    auth_raw = f'{username}:{password}'
+    auth_encode = auth_raw.encode("ascii") 
+    auth_b64 = base64.b64encode(auth_encode)
+    
+    auth = auth_b64.decode("ascii")
+
+
+
+    url = f"https://servicedesk.isha.in/rest/api/2/group?groupname=jira-users&expand=users"
+    headers = {
+        "Authorization": f"Basic {auth}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers)
+    output = response.json()
+
+
+    return output
