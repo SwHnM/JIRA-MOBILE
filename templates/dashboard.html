@@ -197,11 +197,11 @@ function selectTickets() {
 
     if (allowSelect === false){
         ticket_card.forEach(element => {
-            element.setAttribute('onclick', '')
+            ticketKey = element.getAttribute('data-key');
+            
+
+            element.setAttribute('onclick', `selectTicket('${ticketKey}')`)
             element.classList = "ticket-card"
-        });
-        ticket_checkboxes.forEach(element => {
-            element.style.display = 'block'
         });
         allowSelect = true
 
@@ -215,9 +215,7 @@ function selectTickets() {
         ticket_card.forEach(element => {
             ticketKey = element.getAttribute('data-key')
             element.setAttribute('onclick', `location.href='/search/${ticketKey}';`)
-        });
-        ticket_checkboxes.forEach(element => {
-            element.style.display = 'none'
+            element.classList.remove('selected')
         });
         document.getElementById('selected-tickets').reset();
         allowSelect = false
@@ -295,6 +293,7 @@ disable()
 .decks {
     padding-top: 20px;
     border-radius: 20px;
+    background-color: #343633;
     box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);
 }
 

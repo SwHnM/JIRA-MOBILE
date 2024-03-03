@@ -55,10 +55,9 @@ def parse_due_date(date_str):
     delta_days = delta.days
     
     # Define the messages based on the difference in days
-    if delta_days < -3:
-        return "Super Overdue"
-    elif delta_days < 0:
-        return "Overdue"
+    if delta_days < 0:
+        overdue_by = f"Overdue {delta_days}"
+        return overdue_by
     elif delta_days == 0:
         return "Today"
     elif delta_days == 1:

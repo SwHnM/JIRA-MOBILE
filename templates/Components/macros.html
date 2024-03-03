@@ -162,7 +162,7 @@
 <div>
     <div style="display: flex; align-items: center; padding: 20px;">
         <i class="fa-solid {{icon}} icon-bg {{ color }}"></i>
-        <h2 style="margin-left: 10px;">{{ name }}</h2>
+        <h2 style="margin-left: 10px; color: white;">{{ name }}</h2>
         <h2 class="fw-light text-muted" style="margin-left: auto;">{{ tickets | length }}</h2>
     </div>
 
@@ -176,7 +176,7 @@
             data-key="{{ ticket.key }}">
                 <div class="card-inner-info  shadow">
                     <span class="top-badge {{ ticket.fields.duedate }}">{{ ticket.fields.duedate }}</span>
-                    <span class="bottom-badge text-dark ">{{ ticket.key }}</span>
+                    <span class="bottom-badge text-light ">{{ ticket.key }}</span>
                     <div class="ticket-summary">
                         <h6>
                             {{ ticket.fields.summary | truncate(60) }}
@@ -204,7 +204,7 @@
 <!-- checkbox --->
             <!-- Allows ticket to be selected, the javascript and form for this is in dashboard.html -->
             <div class="select-ticket top-right-badge" style="display: none;">
-                <input class="select-checkbox" name="{{ ticket.key }}" type="checkbox" style="height:20px; width:20px;">
+                <input id="checkbox-{{ ticket.key }}" class="select-checkbox" name="{{ ticket.key }}" type="checkbox" style="height:20px; width:20px;">
             </div>
         </div>
         
@@ -215,6 +215,27 @@
     {% endif %}
 </div>
 
+<script>
+    function selectTicket(ticketKey) {
+        const ticket = document.getElementById(`ticket-${ticketKey}`)
+        const checkbox =  document.getElementById(`checkbox-${ticketKey}`)
+        const checkState = checkbox.checked
+
+        if (!(checkState)) {
+            console.log('selected')
+            checkbox.checked=true
+            ticket.classList.add('selected')
+        }else{
+            console.log('removed from list')
+            checkbox.checked=false
+            ticket.classList.remove('selected')
+        }
+
+        console.log(ticketKey)
+        
+    }
+</script>
+
 
 
 <style>
@@ -222,13 +243,13 @@
 
 .reporter{
     text-align: center;
-    background-color: gray;
+    background-color: #2E4057;
     width:30px;
     height: 30px;
     border-radius: 50%;   
     position: absolute;
-    bottom: 40px;
-    right: 10px;
+    bottom: 50px;
+    right: 20px;
 }
 
     /* .reporter.Super {
@@ -260,9 +281,9 @@
 .language{
     font-size: 30px;
     position: absolute;
-    bottom: 80px;
-    right: 10px;
-   color: gray;
+    bottom: 90px;
+    right: 17px;
+   color: #2E4057;
 
 }
 
@@ -301,6 +322,7 @@ color: green;
     height: 30px;
     width: 30px;
     padding: 20px;
+    border: 2px solid white;
     border-radius: 50%;
     background-color: black;
     font-size: 20px;
@@ -312,19 +334,19 @@ color: green;
 
 }
 .icon-bg.green {
-    background-color: #157347;
+    background-color: #294936;
 }
 
 .icon-bg.red {
-    background-color: #bd2130;
+    background-color: #780116;
 }
 
 .icon-bg.blue {
-    background-color: #0b5ed7;
+    background-color: #1a1b41;
 }
 
 .icon-bg.yellow {
-    background-color: #d39e00;
+    background-color: #d5a021;
 }
 
 .sm_icon {
@@ -333,11 +355,11 @@ color: green;
     position:absolute;
     left: 0;
     bottom:30px;
-    filter: invert(22%) sepia(82%) saturate(2436%) hue-rotate(208deg) brightness(99%) contrast(95%);
+    filter: invert(20%) sepia(5%) saturate(4272%) hue-rotate(175deg) brightness(96%) contrast(85%);
 
 }
 
-.sm_icon.Super {
+/* .sm_icon.Super {
     filter: invert(9%) sepia(93%) saturate(4146%) hue-rotate(357deg) brightness(93%) contrast(112%);
 
 }
@@ -360,7 +382,7 @@ color: green;
 .sm_icon.Days {
     filter: invert(26%) sepia(73%) saturate(1669%) hue-rotate(94deg) brightness(100%) contrast(103%);
 
-}
+} */
 
 .ticket-section {
   width: 100%;
@@ -386,7 +408,7 @@ color: green;
   height: 260px;
   margin-right: 10px;
   margin-left: 10px;
-  background: rgba(51, 170, 51,  0);
+  background-color: rgba(51, 170, 51,  0);
   border: 0 solid #cccccc;
   border-radius: 20px;
   position: relative; /* Ensure badge is positioned relative to the card */
@@ -395,32 +417,21 @@ color: green;
   
 }
 
+.ticket-card.selected{
+    background-color: #93beff;
+    margin: 10px;
+}
+
 .card-inner-info {
-    color:black;
+    color:#2E4057;
     background-color: white;
     height: 200px;
     border-radius: 0 0 20px 20px;
 }
 
-.ticket-card-selected {
-/* Used By JS for selected state in dasboard.html */
-  flex: 0 0 auto;
-  width: 200px;
-  height: 220px;
-  margin-right: 10px;
-  margin-left: 10px;
-  background-color: #1255ff;
-  border: 0 solid #cccccc;
-  border-radius: 5px;
-  position: relative; /* Ensure badge is positioned relative to the card */
-  cursor: pointer;
-  transition: 0.5s;
-  
-}
-
 .top-badge {
   position: absolute;
-  background-color: #0b5ed7;
+  background-color: #F7B538;
   top: 0;
   left:0;
   border-radius: 20px 20px 0 0;
@@ -440,22 +451,22 @@ color: green;
     }
 
     .top-badge.Overdue {
-    background-color: darkred;
+    background-color: #780116;
     }
 
 
     .top-badge.Today {
-    background-color: orange;
+    background-color: #C32F27;
 
     }
 
     .top-badge.Tomorrow {
-    background-color: orange;
+    background-color: #D8572A
 
     }
 
     .top-badge.Days {
-    background-color: green;
+    background-color: #DB7C26
 
     }
 
@@ -486,6 +497,8 @@ color: green;
 }
 
 .ticket-summary {
+    font-weight: 400;
+
   margin-top: 30px;
   padding: 10px;
   white-space: normal;
