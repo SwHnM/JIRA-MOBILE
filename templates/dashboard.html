@@ -1,17 +1,22 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class='bg-light no-margin'>
+
+<div class="page-bg">
+<div class='no-margin'>
     <div class="container-fluid d-inline-block " style=" margin-left: 0;">
-        <h6 class="text-muted d-inline-block">Dashboard</h6>
-        <h6 onclick="location.href='/settings';" class="text-muted d-inline-block float-end">{{ username }}</h6>
+        <h6 class="text-light d-inline-block">Dashboard</h6>
+        <h6 onclick="location.href='/settings';" class="text-light d-inline-block float-end">{{ username }}</h6>
     </div>
 <br>
 <br>
-    <div class="container-fluid bg-light">
+    <div class="container-fluid">
         <form class="form-group">
             <div class="input-group shadow" style="border-radius: 30px;">
-                <input class='form-control' type="text" placeholder="Search" aria-label="Recipient's username" aria-describedby="button-addon2" style="height:50px; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-width:0px; border-right-width:0;" id="searchInput">
-                <button class="btn text-muted bg-white" type="button" id="button-addon2" style="font-size: 20px; border-width: 0px; border-left-width:0; border-right-width:0; border-bottom-right-radius: 30px;border-top-right-radius: 30px; border-color: #ced4da;" onclick="searchRedirect()">
+                <input class='form-control'
+                type="text"
+                placeholder="Search"
+                aria-describedby="button-addon2" style="height:50px; border-top-left-radius: 30px; border-bottom-left-radius: 30px; border-width:0px; border-right-width:0;" id="searchInput">
+                <button class="btn text-muted" type="button" id="button-addon2" style="background-color: white; padding-right: 20px; font-size: 20px; border-width: 0px; border-left-width:0; border-right-width:0; border-bottom-right-radius: 30px;border-top-right-radius: 30px; border-color: #ced4da;" onclick="searchRedirect()">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
@@ -21,24 +26,24 @@
 </div>
 
 
-<div class="container-fluid no-margin bg-light" id="mainContent">
+<div class="container-fluid no-margin" id="mainContent">
 
 <div id="contextual-menu">
     <div class="buttonGrouping">
-        <button class="menu-button" id="advanced" onclick="location.href='/search'" style="background-color: #157347;"><i class="fa-solid fa-code"></i></i></button>
-        <label for="advanced" class="buttonDescription text-muted">JQL</label>
+        <button class="menu-button" id="advanced" onclick="location.href='/search'"><i class="fa-solid fa-code"></i></i></button>
+        <label for="advanced" class="buttonDescription text-light">JQL</label>
     </div>    
     <div class="buttonGrouping">
-        <button class="menu-button" id="select" onclick="selectTickets()" style="background-color: #0b5ed7;"><i class="fa-solid fa-object-ungroup"></i></button>
-        <label for="select" class="buttonDescription text-muted">Select</label>
+        <button class="menu-button" id="select" onclick="selectTickets()" style = "background-color: #0b5ed7;"><i class="fa-solid fa-object-ungroup"></i></button>
+        <label for="select" class="buttonDescription text-light">Select</label>
     </div>
     <div class="buttonGrouping">
         <button class="menu-button-disabled" id="assign" form="selected-tickets" type="submit" formaction="/assign" style="background-color: #ffc107;"><i class="fa-solid fa-user"></i></button>
-        <label for="assign" class="buttonDescription text-muted">Assign</label>
+        <label for="assign" class="buttonDescription text-light">Assign</label>
     </div>
     <div class="buttonGrouping">
         <button class="menu-button-disabled" type="submit" form="selected-tickets" id="queue" style="background-color: #6f42c1;"><i class="fa-solid fa-layer-group"></i></button>
-        <label for="queue" class="buttonDescription text-muted">Queue</label>
+        <label for="queue" class="buttonDescription text-light">Queue</label>
     </div>
     
 </div>
@@ -54,7 +59,7 @@
     </div>
 
 <!-- New Deck -->
-    <div class="card bg-light" style="border-radius: 20px; border:0;">
+    <div class="card bg-light" style=" padding-top: 20px; border:0;">
         
         <form id="new-deck-form" class="form-group" action="/newdeck" method="POST" style="margin-top: 10px; padding-bottom: 60px;">
             <h2 class="text-muted" style="margin-left: 20px;">Add Deck</h2>
@@ -94,6 +99,7 @@
 
         
     </div>
+</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -205,7 +211,6 @@ function selectTickets() {
         });
         allowSelect = true
 
-        select_button.style.backgroundColor = 'navy'
         queue_button.classList = 'menu-button'
         assign_button.classList = 'menu-button'
         advanced_button.classList = 'menu-button-disabled'
@@ -220,7 +225,6 @@ function selectTickets() {
         document.getElementById('selected-tickets').reset();
         allowSelect = false
 
-        document.getElementById('select').style.backgroundColor = '#0b5ed7'
         document.getElementById('queue').classList = 'menu-button-disabled'
         document.getElementById('assign').classList = 'menu-button-disabled'
         document.getElementById('advanced').classList = 'menu-button'
@@ -235,13 +239,18 @@ disable()
 </script>
 
 <style>
+
+.page-bg{
+background: rgb(144,124,158);
+background: linear-gradient(90deg, rgba(144,124,158,1) 0%, rgba(91,105,170,1) 100%);
+}
 #mainContent {
         transition: opacity 0.3s ease; /* Add transition effect for opacity */
     }
 
 #contextual-menu {
     padding-top: 30px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
     width: 100%;
     height: 100px;
     display: flex;
@@ -256,11 +265,12 @@ disable()
     border-width: 0;
     border-radius: 50%;
     transition: transform 0.3s ease;
+    background-color: #ffc107;
 }
 
 .menu-button-disabled {
     color: white;
-    background-color: #D3D3D3 !important;
+    background-color: rgba(255, 255, 255, 0.25) !important;
     font-size: 20px;
     height: 70px;
     width: 70px;
@@ -280,21 +290,15 @@ disable()
     transition: transform 0.3s ease;
 }
 
-.menu-button:hover {
-    transform: scale(1.1);
-    border: 20px;
-}
-
 .menu-button:active {
     transform: scale(0.9);
 }
 
 
 .decks {
-    padding-top: 20px;
-    border-radius: 20px;
-    background-color: #343633;
+    border-radius: 20px 20px 0 0;
     box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);
+    background-color: white;
 }
 
 .buttonGrouping{
