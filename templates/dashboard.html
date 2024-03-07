@@ -49,24 +49,60 @@
 </div>
 
     <div class="decks">
-<form id="selected-tickets" action="/queue" method="POST">
-    {% for deck in decks %}
-            {% from "/Components/macros.html" import sidescroller %}
-            {{ sidescroller(deck['name'], deck['jql'], deck['tickets'], deck['color'], deck['icon']) }}
-    {% endfor %}
-</form>
-<br>
+        <form id="selected-tickets" action="/queue" method="POST">
+            {% for deck in decks %}
+                    {% from "/Components/macros.html" import sidescroller %}
+                    {{ sidescroller(deck['name'], deck['jql'], deck['tickets'], deck['color'], deck['icon']) }}
+            {% endfor %}
+        </form>
+        <br>
     </div>
 
 <!-- New Deck -->
-    <div class="card bg-light" style=" padding-top: 20px; border:0;">
+<div class="page-bg">
+    <div class="card" style="background-color: white; border-radius: 20px; border-top-right-radius: 0; border-top-left-radius: 0; margin: right 60px left 60px; padding-top: 20px; border:0;">
         
         <form id="new-deck-form" class="form-group" action="/newdeck" method="POST" style="margin-top: 10px; padding-bottom: 60px;">
             <h2 class="text-muted" style="margin-left: 20px;">Add Deck</h2>
             <div style="padding: 20px">
                 <span id="error" class="error"></span><br>
-                <input name="deck-name" class="form-control" style="border-radius: 30px; height:50px;" placeholder="Name">
-                <br><input id="deck-jql" name="deck-jql" class="form-control" style="border-radius: 30px; height:50px;" placeholder="JQL">
+                
+                    <div class="form-group d-flex">
+                        <input name="deck-name" class="form-control new-deck" placeholder="Deck Name">
+                    </div>
+            
+                        <div class="form-group d-flex">
+                            <input name="assignee" class="form-control new-deck me-1" type="text" placeholder="Assignee">
+                            <input name="status" class="form-control new-deck me-1" type="text" placeholder="Status">
+                        </div>
+                        <div class="form-group d-flex">
+                            <input id="deck-jql" name="custom-jql" class="form-control new-deck me-1" type="text" placeholder="Additional JQL (Optional)">
+                        </div>
+                        <div style="display: flex; justify-content: center;">
+                            <div class="form-group d-flex" style="margin-right: 10px;">
+                                <select name="type" class="form-select" aria-label="Default select example" style="width: 150px;">
+                                    <option selected> Ticket Type</option>
+                                    <option value="1">Something</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                            <div class="form-group d-flex">
+                                <select name="sort" class="form-select" aria-label="Default select example" style="width: 150px;">
+                                    <option value='created DESC' selected>Latest</option>
+                                    <option value="created ASC">Oldest</option>
+                                    <option value="status ASC">Status</option>
+                                    <option value="assignee ASC">Assignee</option>
+                                    <option value="issuetype ASC">Type</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        
+                    
+                
+                
+                
                 <div class="container" style="margin-top: 30px; text-align: center;">
                     <div class="form-check form-check-inline">
                         <input class="form-check-input bg-danger" type="radio" name="deck-color" value="red">
@@ -81,6 +117,11 @@
                         <input class="form-check-input bg-success" type="radio" name="deck-color" value="green">
                     </div>
                 </div>
+                
+
+
+
+
                 <div class="container" style="margin-top: 30px;">
                     {% for icon in icons %}
                         <input type="radio" name="deck-icon" value="{{icon}}" id="{{icon}}" class="icon-checkbox">
@@ -92,13 +133,8 @@
                 <button type="submit" class="menu-button bg-primary" id="add-deck" style="background-color:gray ;"><i class="fa-solid fa-plus"></i></i></button>
             </div>
         </form>
-    
-
-    
-        
-
-        
     </div>
+</div>
 </div>
 </div>
 
@@ -136,7 +172,7 @@
     jql = jql.trim();
 
     // Regular expression to match basic JQL syntax
-    var jqlRegex = /^(?:project|issueType|status|assignee|reporter|priority|resolution|created|updated|resolved|due|watcher|text|comment|votes|watching|component|affectedVersion|fixVersion|label|linkedIssue|subtask|Epic Link)\s*([=!<>]=?|in|not in|was|was not|is|is not|changed)\s*("[^"]+"|[^ ]+)/g;
+    var jqlRegex = /^(?:project|issueType|status|assignee|reporter|priority|resolution|created|updated|resolved|due|watcher|text|comment|votes|watching|component|affectedVersion|fixVersion|label|linkedIssue|subtask|Epic Link)?\s*([=!<>]=?|in|not in|was|was not|is|is not|changed)?\s*("[^"]+"|[^ ]+)?$/g;
 
     if (!jqlRegex.test(jql)) {
         throw new Error('Invalid JQL syntax.');
@@ -234,15 +270,29 @@ enable()
 disable()
 }
 
-
-
 </script>
 
 <style>
 
+input.form-control.new-deck {
+        margin: 20px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0; /* Optional: Set border radius if needed */
+        background-color: transparent; /* Set background color to transparent */
+    }
+
+    /* Style for the input fields when focused */
+input.form-control.new-deck:focus {
+        outline: none; /* Remove outline */
+        border-color: #007bff; /* Optionally change border color when focused */
+    }
+
 .page-bg{
 background: rgb(144,124,158);
 background: linear-gradient(90deg, rgba(144,124,158,1) 0%, rgba(91,105,170,1) 100%);
+padding-bottom: 20px;
 }
 #mainContent {
         transition: opacity 0.3s ease; /* Add transition effect for opacity */

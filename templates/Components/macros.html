@@ -154,10 +154,11 @@
 
 {% macro sidescroller(name, jql, tickets, color, icon) %}
 
-<div class='shadow-top'>
+<div id="deck-{{ name }}" class='shadow-top'>
     <div style="display: flex; align-items: center; padding: 20px; padding-bottom: 0;">
         <i class="fa-solid {{icon}} icon-bg {{ color }}"></i>
-        <h2 style="margin-left: 10px; color: #2E4057">{{ name }}</h2>
+        <h2 onclick="showDelete()" style="margin-left: 10px; color: #2E4057">{{ name }}</h2>
+        <i onclick="location.href='/deletedeck/{{ name }}';"  class="delete-deck fa-solid fa-trash text-muted" style="margin-left: 10px; display:none;"></i>
         <h2 class="fw-light text-muted" style="margin-left: auto;">{{ tickets | length }}</h2>
     </div>
 
@@ -210,6 +211,7 @@
     {% endif %}
 </div>
 
+
 <script>
     function selectTicket(ticketKey) {
         const ticket = document.getElementById(`ticket-${ticketKey}`)
@@ -229,14 +231,39 @@
         console.log(ticketKey)
         
     }
+
+    let deleteToggle = false
+    
+function showDelete() {
+    decks = Array.from(document.getElementsByClassName('delete-deck'));
+    
+    if (deleteToggle) {
+        decks.forEach(element => {
+            element.style.display = "none";       
+        });
+    } else {
+        decks.forEach(element => {
+            element.style.display = "block";
+            console.log('wowza');
+        });
+    }
+    
+    // Toggle the deleteToggle variable
+    deleteToggle = !deleteToggle;
+}
 </script>
 
 
 
 <style>
 
+#delete-deck:hover {
+    display: block;
+}
+
 .shadow-top{
-    border-radius: 20px;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
     box-shadow: 0 -5px 40px -5px rgba(46, 64, 87, 0.4);
 }
 /* colors are taken from bootstrap v 5.3 */
@@ -302,7 +329,7 @@
     border-radius: 0 0 0 20px;
     position:absolute;
     left: 0;
-    bottom:20px;
+    bottom:30px;
     filter: invert(20%) sepia(5%) saturate(4272%) hue-rotate(175deg) brightness(96%) contrast(85%);
 
 }
@@ -339,7 +366,9 @@
   transition: 0.5s;
   
 }
-
+.ticket-card:active {
+    transform: scale(0.9);
+}
 
 
 .ticket-card.selected{

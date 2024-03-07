@@ -150,9 +150,32 @@ def privatecomment():
 
 def newdeck():
     name= request.form.get('deck-name')
-    jql= request.form.get('deck-jql')
     color= request.form.get('deck-color')
     icon= request.form.get('deck-icon')
+
+
+# ############# This is for constructor ##########
+    search_items = request.form
+
+    # Initialize an empty list to store JQL clauses
+    jql_clauses = []
+
+    # Construct JQL clauses based on provided inputs
+    if search_items.get('assignee', '') != '':
+        jql_clauses.append(f'assignee = "{search_items["assignee"]}"')
+    if search_items.get('status', '') != '':
+        jql_clauses.append(f'status = "{search_items["status"]}"')
+    if search_items.get('type', '') != '' and search_items['type'] != 'Type':
+        jql_clauses.append(f'type = "{search_items["type"]}"')
+
+    # Join the clauses using 'AND' for filtering and ' ' for other clauses
+    jql = ' AND '.join(jql_clauses)
+
+    sort_by = (f' ORDER BY {search_items["sort"]}')
+    
+    jql += sort_by
+
+# ############# This is for constructor ##########
 
 
     config_path = session.get("config_path")
@@ -173,6 +196,28 @@ def newdeck():
         json.dump(user, userdata)
 
     return redirect('/dashboard')
+
+@app.route("/deletedeck/<deck_name>")
+def delete_deck(deck_name):
+    config_path = session.get("config_path")
+
+    with open(config_path, 'r') as userdata:
+        user = json.load(userdata)
+        decks = user['decks']
+
+        # Remove the deck with the given name
+        decks = [deck for deck in decks if deck['name'] != deck_name]
+
+    # Update the 'decks' key in the user data
+    user['decks'] = decks
+
+    # Write the updated user data back to the file
+    with open(config_path, 'w') as userdata:
+        json.dump(user, userdata)
+
+    return redirect('/dashboard')
+
+
     
     
 @app.route("/queue", methods=('GET', 'POST'))
@@ -190,9 +235,36 @@ def queue():
     else:
         session['queue_mode_active'] = False
         return redirect('/queue_complete')
+    
 
 
+@app.route("/jqlconstructor", methods=("GET", "POST"))
+def construct_jql():
+     # Get form inputs
+    search_items = request.form
 
+    # Initialize an empty list to store JQL clauses
+    jql_clauses = []
+
+    # Construct JQL clauses based on provided inputs
+    if search_items.get('assignee', '') != '':
+        jql_clauses.append(f'assignee = "{search_items["assignee"]}"')
+    if search_items.get('status', '') != '':
+        jql_clauses.append(f'status = "{search_items["status"]}"')
+    if search_items.get('type', '') != '' and search_items['type'] != 'Type':
+        jql_clauses.append(f'type = "{search_items["type"]}"')
+
+    # Join the clauses using 'AND' for filtering and ' ' for other clauses
+    jql = ' AND '.join(jql_clauses)
+
+    sort_by = (f' ORDER BY {search_items["sort"]}')
+    
+    jql += sort_by
+
+    # Store JQL query in session
+    session['jql'] = jql
+
+    return redirect('/search')
 
 
     
@@ -473,20 +545,3 @@ def assign_sumbit():
     except Exception as e:
         print(e)
         return redirect('/assign')
-    
-    
-
-
-   
-
-
-    
-
-    
-
-    r
-
-
-
-
-

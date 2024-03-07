@@ -8,18 +8,63 @@
 <br>
 <h2>Advanced Search</h2>
 <br>
-<form method="POST" action="/jql"class="d-flex flex-column">
+
+<div class="shadow search-card">
+    <h2>Raw JQL</h2>
+    <form method="POST" action="/jql"class="d-flex flex-column">
+        <div class="form-group d-flex">
+            <input class="form-control me-1" type="text" placeholder='Enter JQL' value="{{ last_jql }}" name="jql" aria-label="Search">
+            <button class="btn btn-primary" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+        <br> 
+        <div>
+            <input class="form-check-input" type="checkbox" name="hide_closed_tickets" value="checked"> Hide Closed Tickets
+        </div>
+    </form>
+</div>
+
+<br>
+<div class="shadow search-card">
+<h2>Search Constructor</h2>
+<form method="POST" action="/jqlconstructor">
     <div class="form-group d-flex">
-        <input class="form-control me-1" type="text" placeholder='Enter JQL' value="{{ last_jql }}" name="jql" aria-label="Search">
+        <input name="assignee" class="form-control me-1" type="text" placeholder="Assignee">
+        <input name="status" class="form-control me-1" type="text" placeholder="Status">
+    </div>
+    <br>
+    <div class="form-group d-flex">
+        <select name="type" class="form-select" aria-label="Default select example">
+            <option selected>Type</option>
+            <option value="1">Something</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+        
+        <select name="sort" class="form-select" aria-label="Default select example">
+            <option value='created DESC' selected>Latest</option>
+            <option value="created ASC">Oldest</option>
+            <option value="status ASC">Status</option>
+            <option value="assignee ASC">Assignee</option>
+            <option value="issuetype ASC">Type</option>
+        </select>
+    </div>
+
+    <br>
+    <div>
         <button class="btn btn-primary" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
     </div>
-    <br> 
-    <div>
-        <input class="form-check-input" type="checkbox" name="hide_closed_tickets" value="checked"> Hide Closed Tickets
-    </div>
+
+
+
 </form>
+</div>
+
+
+
 <div class="container-fluid," style="border-width: 0px;">
     {% if tickets %}
     <ul class="list-group list-group-flush">
@@ -78,6 +123,12 @@ a.filldiv{
     height: 100%;
     width: 100%;
     text-decoration: none;
+}
+
+.search-card{
+    margin: 20px;
+    padding:20px;
+    border-radius: 20px;
 }
 </style>
 {% endblock %}
