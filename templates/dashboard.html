@@ -184,10 +184,16 @@
 document.getElementById('new-deck-form').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent form submission
 
+    var deckName = document.querySelector('.new-deck[name="deck-name"]').value.trim();
     var jql = document.getElementById('deck-jql').value.trim();
     var errorSpan = document.getElementById('error');
 
     try {
+        // Validate deck name (optional)
+        if (deckName === '') {
+            throw new Error('Deck name cannot be empty');
+        }
+
         validateJQL(jql);
         // If validation successful
         errorSpan.textContent = ''; // Clear any previous error messages

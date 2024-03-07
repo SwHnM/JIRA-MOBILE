@@ -165,7 +165,7 @@ def newdeck():
         jql_clauses.append(f'assignee = "{search_items["assignee"]}"')
     if search_items.get('status', '') != '':
         jql_clauses.append(f'status = "{search_items["status"]}"')
-    if search_items.get('type', '') != '' and search_items['type'] != 'Type':
+    if search_items.get('type', '') != '' and search_items['type'] != 'Ticket Type':
         jql_clauses.append(f'type = "{search_items["type"]}"')
 
     # Join the clauses using 'AND' for filtering and ' ' for other clauses
