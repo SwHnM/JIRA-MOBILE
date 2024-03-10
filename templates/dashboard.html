@@ -76,17 +76,13 @@
                             <input name="status" class="form-control new-deck me-1" type="text" placeholder="Status">
                         </div>
                         <div class="form-group d-flex">
+                            <input id="type" name="type" class="form-control new-deck me-1" type="text" placeholder="Ticket Type">
+                        </div>
+                        <div class="form-group d-flex">
                             <input id="deck-jql" name="custom-jql" class="form-control new-deck me-1" type="text" placeholder="Additional JQL (Optional)">
                         </div>
-                        <div style="display: flex; justify-content: center;">
-                            <div class="form-group d-flex" style="margin-right: 10px;">
-                                <select name="type" class="form-select" aria-label="Default select example" style="width: 150px;">
-                                    <option selected> Ticket Type</option>
-                                    <option value="1">Something</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                            </div>
+                        <div style="display: flex; justify-content: center;"> 
+                            <p class="text-muted" style="margin: 20px;">Sort By:</p>
                             <div class="form-group d-flex">
                                 <select name="sort" class="form-select" aria-label="Default select example" style="width: 150px;">
                                     <option value='created DESC' selected>Latest</option>
@@ -261,7 +257,7 @@ function selectTickets() {
     else {
         ticket_card.forEach(element => {
             ticketKey = element.getAttribute('data-key')
-            element.setAttribute('onclick', `location.href='/search/${ticketKey}';`)
+            element.setAttribute('onclick', `openTicket('${ticketKey}')`)
             element.classList.remove('selected')
         });
         document.getElementById('selected-tickets').reset();

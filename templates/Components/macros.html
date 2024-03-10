@@ -15,7 +15,7 @@
         {% else %}
         
         <div class="col-auto">
-            <div onclick="history.back()" class="d-inline-block">
+            <div onclick="location.href='/dashboard'" class="d-inline-block">
                 <i class="fa-solid fa-arrow-left"></i>
                 <p class="text-muted d-inline-block ml-1">Back</p>
             </div>
@@ -32,7 +32,7 @@
 {% endmacro %}
 
 {% macro comment_component(comments) %}
-<div class="bg-light" style="padding:15px;border-radius: 20px; padding-top: 50px; box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);">
+<div class="bg-muted" style="padding:15px;border-radius: 20px; padding-top: 50px; box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.25);">
     <form method="POST" action="/comment">
         <div id='add-comment-container' class="mb-3 position-relative" onclick="expandCommentBox()">
             <textarea id="add-comment" class="form-control shadow" name="comment" placeholder="Type your comment..."></textarea>
@@ -50,12 +50,12 @@
             <li class="list-group-item" style="border:0; padding:0; border-radius: 20px;">
                 <div class="card shadow-sm" style="border:0; border-radius: 20px;">
                     <div class="card-body">
-                        <h5 class="card-title">{{ comment.author }}</h5>
+                        <h6 class="card-title">{{ comment.author }}</h6>
                         {% if comment.internal %}
                             <span class="shadow-sm position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"><i class="fa fa-eye-slash"></i></span>
                         
                         {% endif %}
-                        <p class="text">
+                        <p class="text" style="padding-bottom: 0;">
                             {% for line in comment.body.splitlines() %}
                                 {{line | safe }}<br>
                             {% endfor %}
@@ -153,12 +153,16 @@
 {% endmacro %}
 
 {% macro sidescroller(name, jql, tickets, color, icon) %}
+<!-- The styles for this are in a seperate stylesheet. There a lot,
+and by placing it in the head it avoids an issue where everything
+loads without styles and then it takes a few seconds for styles to kick in-->
 
 <div id="deck-{{ name }}" class='shadow-top'>
     <div style="display: flex; align-items: center; padding: 20px; padding-bottom: 0;">
         <i class="fa-solid {{icon}} icon-bg {{ color }}"></i>
-        <h2 onclick="showDelete()" style="margin-left: 10px; color: #2E4057">{{ name }}</h2>
-        <i onclick="location.href='/deletedeck/{{ name }}';"  class="delete-deck fa-solid fa-trash text-muted" style="margin-left: 10px; display:none;"></i>
+        <h2 style="margin-left: 10px; color: #2E4057">{{ name }}</h2>
+        <i onclick="showDelete()" class="edit-deck-icons fas fa-edit"></i>
+        <i onclick="location.href='/deletedeck/{{ name }}';" style="display:none;" class="delete-deck edit-deck-icons fa-solid fa-trash text-muted"></i>
         <h2 class="fw-light text-muted" style="margin-left: auto;">{{ tickets | length }}</h2>
     </div>
 
@@ -168,7 +172,7 @@
         <div class="ticket-container">
             {% for ticket in tickets %}
             <div id="ticket-{{ ticket.key }}"  class="ticket-card"      
-            onclick="location.href='/search/{{ ticket.key }}';"
+            onclick="openTicket('{{ ticket.key }}')"
             data-key="{{ ticket.key }}">
                 <div class="card-inner-info {{ ticket.fields.duedate }}">
                     <span class="top-badge {{ ticket.fields.duedate }}">{{ ticket.fields.duedate }}</span>
@@ -213,6 +217,11 @@
 
 
 <script>
+    function openTicket(ticketKey) {
+        console.log(ticketKey)
+        location.href=`/search/${ticketKey}`
+    }
+
     function selectTicket(ticketKey) {
         const ticket = document.getElementById(`ticket-${ticketKey}`)
         const checkbox =  document.getElementById(`checkbox-${ticketKey}`)
@@ -251,238 +260,9 @@ function showDelete() {
     // Toggle the deleteToggle variable
     deleteToggle = !deleteToggle;
 }
+
+
 </script>
-
-
-
-<style>
-
-#delete-deck:hover {
-    display: block;
-}
-
-.shadow-top{
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
-    box-shadow: 0 -5px 40px -5px rgba(46, 64, 87, 0.4);
-}
-/* colors are taken from bootstrap v 5.3 */
-
-.reporter{
-    text-align: center;
-    background-color: #2E4057;
-    width:30px;
-    height: 30px;
-    border-radius: 50%;   
-    position: absolute;
-    bottom: 40px;
-    right: 20px;
-}
-
-
-.language{
-    font-size: 30px;
-    position: absolute;
-    bottom: 80px;
-    right: 17px;
-   color: #2E4057;
-
-}
-
-.icon-bg {
-    color: white;
-    height: 30px;
-    width: 30px;
-    padding: 20px;
-    border-radius: 50%;
-    background-color: black;
-    font-size: 20px;
-    vertical-align: middle;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-}
-.icon-bg.green {
-    background-color: #294936;
-    box-shadow: 0 4px 10px -3px rgba(41, 73, 54, 0.4)
-}
-
-.icon-bg.red {
-    background-color: #780116;
-    box-shadow: 0 4px 10px -3px rgba(120, 1, 22, 0.4)
-}
-
-.icon-bg.blue {
-    background-color: #1a1b41;
-    box-shadow: 0 4px 10px -3px rgba(26, 27, 65, 0.4)
-}
-
-.icon-bg.yellow {
-    background-color: #d5a021;
-    box-shadow: 0 4px 10px -3px  rgba(213, 160, 33, 0.4)
-}
-
-.sm_icon {
-    height: 100px;
-    border-radius: 0 0 0 20px;
-    position:absolute;
-    left: 0;
-    bottom:30px;
-    filter: invert(20%) sepia(5%) saturate(4272%) hue-rotate(175deg) brightness(96%) contrast(85%);
-
-}
-
-.ticket-section {
-  width: 100%;
-  height: 260px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.ticket-section::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for WebKit browsers (e.g. Chrome, Safari) */
-}
-
-.ticket-container {
-  display: flex;
-  flex-wrap: nowrap;
-  padding: 10px;
-  padding-top: 20px;
-}
-
-.ticket-card {
-  flex: 0 0 auto;
-  width: 200px;
-  height: 230px;
-  margin-right: 10px;
-  margin-left: 10px;
-  background-color: rgba(51, 170, 51,  0);
-  border: 0 solid #cccccc;
-  border-radius: 20px;
-  position: relative; /* Ensure badge is positioned relative to the card */
-  cursor: pointer;
-  transition: 0.5s;
-  
-}
-.ticket-card:active {
-    transform: scale(0.9);
-}
-
-
-.ticket-card.selected{
-    background-color: #93beff;
-    margin: 10px;
-}
-
-.card-inner-info {
-    color:#2E4057;
-    background-color: white;
-    height: 170px;
-    border-radius: 0 0 20px 20px;
-    box-shadow: 0 4px 20px -3px rgba(247, 181, 56, 0.4)
-
-}
-.card-inner-info.Overdue {
-    box-shadow: 5px 4px 20px -3px rgba(120, 1, 22, 0.4);
-
-}
-
-
-
-    .card-inner-info.Today {
-    box-shadow: 5px 4px 30px -3px rgba(195, 47, 39, 0.4);
-
-    }
-
-    .card-inner-info.Tomorrow {
-        box-shadow: 5px 4px 30px -3px rgba(216, 87, 42, 0.4)
-
-    }
-
-    .card-inner-info.Days {
-        box-shadow: 5px 4px 30px -3px rgba(219, 124, 38, 0.4)
-
-    }
-
-.top-badge {
-  position: absolute;
-  background-color: #F7B538;
-  box-shadow: -10px -6px 20px -3px rgba(98, 123, 146, 0.4);
-  top: 0;
-  left:0;
-  border-radius: 20px 20px 0 0;
-  height: 30px;
-  width: 200px;
-  padding:10px;
-  color: white;
-  font-weight: 600;
-  text-align: center;
-  line-height: 15px;
-
-
-}
-
-    .top-badge.Overdue {
-    background-color: #780116;
-    }
-
-
-    .top-badge.Today {
-    background-color: #C32F27;
-
-    }
-
-    .top-badge.Tomorrow {
-    background-color: #D8572A
-
-    }
-
-    .top-badge.Days {
-    background-color: #DB7C26
-
-    }
-
-
-.top-right-badge {
-  position: absolute;
-  top: 20px;
-  right: 10px;
-}
-
-.bottom-right-badge {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
-
-.bottom-badge {
-  position: absolute;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(98, 123, 146, 0.8);
-  bottom: 0px;
-  left: 0px;
-  width: 100%;
-  height: 20px;
-  border-radius: 0 0 20px 20px;
-  line-height: 20px;
-}
-
-.ticket-summary {
-    font-weight: 400;
-
-  margin-top: 30px;
-  padding: 10px;
-  white-space: normal;
-  word-break: break-all;
-}
-
-
-</style>
-
 {% endmacro %}
 
 {% macro workflow(transitions) %}

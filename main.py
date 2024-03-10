@@ -355,11 +355,7 @@ def display_issue(issue_key):
 
             raw_fields = ticket["fields"]
             fields = {key: raw_fields[key] for key in whitelist if key in raw_fields}
-
-            if status == 'Pending Requester Clarification':
-                template = 'EPSD/epsd_proofing.html'
-            else:
-                template = 'EPSD/epsd.html'
+            template = 'EPSD/epsd.html'
         else:
             template = 'basic.html'
 

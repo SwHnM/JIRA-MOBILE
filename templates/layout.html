@@ -9,18 +9,63 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
+    <!-- Dashboard Styles -->
+    <link rel="stylesheet" href="/static/styles/sidescroller_dashboard.css">
+    <!-- Dashboard Styles -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Rubik:ital,wght@0,300..900;1,300..900&family=Varela+Round&display=swap" rel="stylesheet">
    
     <title>JIRA Mobile</title>
+
+    <style>
+        /* CSS for the loading screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: none; /* Initially hide the loading screen */
+        }
+        #loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Add your own styling for the loading spinner */
+        }
+
+        #current-view {
+            display: block;
+        }
+    </style>
+
+    <style>
+        body, .no-margin {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: "Rubik", sans-serif;
+        font-optical-sizing: auto;
+    }
+    
+    </style>
+
 </head>
 
-
-
+<div id="loading-screen">
+    <div id="loading-spinner">
+        <img src="/static/assets/loading.gif" height="100px">
+    </div>
+</div>
 
 <body>
-        <div class="container-fluid no-margin">
+        <div id="current-view" class="container-fluid no-margin">
             {% block content %}{% endblock %}
         </div>
 
@@ -29,17 +74,51 @@
 
 </body>
 
-<style>
-    body, .no-margin {
-    margin: 0;
-    padding: 0;
-}
 
-body {
-    font-family: "Rubik", sans-serif;
-    font-optical-sizing: auto;
-}
-</style>
+
+<script>
+    // Function to show loading screen
+    function showLoadingScreen() {
+        document.getElementById('loading-screen').style.display = 'block';
+        document.getElementById('current-view').style.display = 'none';
+    }
+
+    // Function to hide loading screen
+    function hideLoadingScreen() {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('current-view').style.display = 'block';
+    }
+
+    // Function to handle location change
+    function handleLocationChange(event) {
+        console.log('Location changed:', window.location.href);
+        showLoadingScreen(); // Show loading screen when navigating
+    }
+
+    // Add event listener for popstate event
+    window.addEventListener('popstate', function(event) {
+        // Handle location change
+        handleLocationChange(event);
+
+        // Hide loading screen when navigating back using browser's back button
+        // This will only hide the loading screen if it is currently being shown
+        hideLoadingScreen();
+    });
+
+    // Add event listener for beforeunload event
+    window.addEventListener('beforeunload', function(event) {
+        // Show loading screen before leaving the page
+        showLoadingScreen();
+    });
+
+    // Add event listener for load event to hide loading screen
+    window.addEventListener('load', function(event) {
+        // Hide loading screen once the new page content has finished loading
+        hideLoadingScreen();
+    });
+    // Ensure loading screen is hidden when the page initially loads
+    hideLoadingScreen();
+</script>
 
 </html>
 
