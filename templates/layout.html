@@ -11,6 +11,7 @@
 
     <!-- Dashboard Styles -->
     <link rel="stylesheet" href="/static/styles/sidescroller_dashboard.css">
+    <link rel="stylesheet" href="/static/styles/main_dashboard.css">
     <!-- Dashboard Styles -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,11 +25,14 @@
         #loading-screen {
             position: fixed;
             top: 0;
-            left: 0;
+            right: -100%; /* Initially positioned outside the viewport */
             width: 100%;
             height: 100%;
             background-color: rgba(255, 255, 255, 0.8);
-            display: none; /* Initially hide the loading screen */
+            transition: right 0.3s ease; /* Add smooth transition effect */
+        }
+        #loading-screen.active {
+            right: 0; /* Slide in from the right */
         }
         #loading-spinner {
             position: absolute;
@@ -36,10 +40,6 @@
             left: 50%;
             transform: translate(-50%, -50%);
             /* Add your own styling for the loading spinner */
-        }
-
-        #current-view {
-            display: block;
         }
     </style>
 
@@ -60,7 +60,7 @@
 
 <div id="loading-screen">
     <div id="loading-spinner">
-        <img src="/static/assets/loading.gif" height="100px">
+        <img src="/static/assets/loading.gif" height="200px">
     </div>
 </div>
 
@@ -79,13 +79,13 @@
 <script>
     // Function to show loading screen
     function showLoadingScreen() {
-        document.getElementById('loading-screen').style.display = 'block';
+        document.getElementById('loading-screen').classList.add('active');
         document.getElementById('current-view').style.display = 'none';
     }
 
     // Function to hide loading screen
     function hideLoadingScreen() {
-        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('loading-screen').classList.remove('active');
         document.getElementById('current-view').style.display = 'block';
     }
 
@@ -116,6 +116,7 @@
         // Hide loading screen once the new page content has finished loading
         hideLoadingScreen();
     });
+
     // Ensure loading screen is hidden when the page initially loads
     hideLoadingScreen();
 </script>

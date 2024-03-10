@@ -38,7 +38,9 @@ def raw_search(jql, fields, username, password):
     }
     payload = {
         "jql": jql,
-        "fields": fields
+        "fields": fields,
+        "maxResults": '120'
+        
     }
 
     response = requests.post(url, headers=headers, json=payload)

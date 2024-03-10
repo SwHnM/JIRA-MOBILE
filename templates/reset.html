@@ -1,0 +1,17 @@
+
+{% extends 'layout.html' %}
+{% block content %}
+<div style="margin-top: 200px; padding: 20px; text-align: center;">
+<h1> {{ user }} </h1>
+<h3> Are you sure you want to reset your account?</h3>
+
+<button  onclick="location.href = '/login'" class="btn btn-primary">Go Back</button>
+<button onclick="location.href = '/newuser'" class="btn btn-danger">Reset</button>
+</div>
+
+<style>
+    .btn {
+        margin: 10px;
+    }
+</style>
+{% endblock %}

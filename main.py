@@ -29,6 +29,19 @@ app.secret_key = os.urandom(24)  # set a secret key for sessions
 def login():
     return render_template('login.html')
 
+@app.route("/reset")
+def reset():
+    username = session.get("username")
+    
+    if username:
+        return render_template('reset.html', user=username)
+    else:
+        return redirect('/login')
+    
+@app.route("/help")
+def help():
+        return render_template('help.html')
+
 @app.route("/auth", methods=('GET', 'POST'))
 def auth():
     try:
@@ -402,7 +415,7 @@ def transition(id):
     jira.transition_issue(issue_key, transition)
     return redirect('/ticket')
         
-    
+
 
         
 
@@ -541,3 +554,4 @@ def assign_sumbit():
     except Exception as e:
         print(e)
         return redirect('/assign')
+    

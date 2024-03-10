@@ -1,0 +1,26 @@
+
+{% extends 'layout.html' %}
+{% block content %}
+<div style="margin-top: 200px; padding: 20px;">
+
+<h1>Can't log in?</h1>
+<br>
+<h3>1. Log in to Desktop Jira</h3>
+<p>First, try logging in to JIRA on desktop. Make sure you have the right username and password combination and have completed the captcha recently.</p>
+
+<a href="https://servicedesk.isha.in/"><button class="btn btn-primary">JIRA Desktop</button></a>
+
+
+<h3>2. Reset Jira Mobile</h3>
+<p>If logging in on the main JIRA site works and your issue still persists, you can reset the JIRA Mobile app. This resets your app configuration, but doesn't affect your JIRA desktop.</p>
+
+<button  onclick="location.href = '/reset'" class="btn btn-primary">Reset</button>
+
+</div>
+
+<style>
+    .btn {
+        margin: 10px;
+    }
+</style>
+{% endblock %}
