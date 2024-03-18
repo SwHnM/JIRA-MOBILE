@@ -1,1 +1,25 @@
-{"username": "swami.hanumesha", "firstname": "Luke", "lastname": "Skywalker", "decks": [{"name": "My Tickets", "jql": "assignee = currentUser() AND status not in ('text delivered','EngPub Review', closed, Canceled, cancelled, DONE, Resolved, 'Pending Requester Review', 'Pending Requester Clarification', 'W/Cust-Clar (Text)', 'W/Cust-Review (Text)', 'Text Under Review')", "color": "red", "icon": "fa-ghost"}, {"name": "Proofing Tickets", "jql": "assignee = harry.s AND status = 'W/Publ- Proofing'", "color": "green", "icon": "fa-chess-pawn"}, {"name": "El-boss", "jql": "assignee = elena.potek", "color": "yellow", "icon": "fa-pepper-hot"}]}
+{
+	"username": "swami.hanumesha",
+	"firstname": "Swami",
+	"lastname": "Hanumesha",
+	"decks": [
+		{
+			"name": "My Tickets",
+			"jql": "assignee = currentUser() AND status not in ('text delivered','Delivered','EngPub Review', closed, Canceled, cancelled, DONE, Resolved, 'Rework with Impressions', 'Pending Requester Review', 'Pending Requester Clarification', 'W/Cust-Clar (Text)', 'W/Cust-Review (Text)', 'Text Under Review')",
+			"color": "red",
+			"icon": "fa-ghost"
+		},
+		{
+			"name": "Proofing Tickets",
+			"jql": "project in (OCD) and status in ('w/publ- proofing') and type not in ('Landing Page Request','OCD Video Edit', 'Illustration') and IM_Language = English",
+			"color": "green",
+			"icon": "fa-chess-pawn"
+		},
+		{
+			"name": "Elena's Tickets",
+			"jql": "assignee = elena.potek AND status not in ('w/publ- proofing','Text Delivered', 'Rework with Impressions', 'pending requester approval', 'pending requester clarification', 'pending requester review', 'Waiting for Requester', 'On Hold', Closed, Cancelled, DONE, 'Need More Info', Delivered, 'W/Cust-Review (Text)','W/Cust-Review (Design)','W/Cust-Clar (Text)')",
+			"color": "yellow",
+			"icon": "fa-pepper-hot"
+		}
+	]
+}
